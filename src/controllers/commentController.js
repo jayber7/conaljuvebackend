@@ -76,9 +76,12 @@ const deleteComment = asyncHandler(async (req, res, next) => {
   if (!comment) {
     return next(new AppError('Comentario no encontrado', 404));
   }
-
+   // --- MODIFICACIÓN: Verificar Permisos ---
+    // Permitir si es el autor O si es ADMIN O si es STAFF
+    const isAuthor = comment.author.toString() === userId.toString();
+    const isAdminOrStaff = userRole === 'ADMIN' || userRole === 'STAFF';
   // Verificar permisos: O es el autor O es admin
-  if (comment.author.toString() !== userId.toString() && userRole !== 'ADMIN') {
+  if (!isAuthor && !isAdminOrStaff) {
       return next(new AppError('No tienes permiso para eliminar este comentario', 403)); // 403 Forbidden
   }
 

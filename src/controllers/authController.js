@@ -8,8 +8,11 @@ const AppError = require('../utils/appError.js');
 // @route   POST /api/auth/register
 // @access  Public
 const registerUser = asyncHandler(async (req, res, next) => {
-  const { name, username, email, password, location } = req.body;
+  const { name, username, email, password, location, birthDate, gender, idCard, phoneNumber } = req.body;
 
+  // La información del archivo subido (si existe) está en req.file
+  // multer-storage-cloudinary añade la propiedad 'path' con la URL segura de Cloudinary
+  const profilePictureUrl = req.file ? req.file.path : undefined; // <-- OBTENER URL DE req.file
   // 1. Validar datos (hecho con express-validator en las rutas)
 
   // 2. Verificar si el usuario ya existe
@@ -19,26 +22,46 @@ const registerUser = asyncHandler(async (req, res, next) => {
   }
 
   // 3. Crear usuario (la contraseña se hashea en el pre-save hook del modelo)
-  const user = await User.create({
+  // 3. Crear objeto para el nuevo usuario
+  const newUserInput = {
     name,
     username,
     email,
-    password, // Pasar la contraseña en texto plano, el modelo la hashea
-    location, // Asegúrate que la estructura coincida con el modelo
-  });
+    password, // Se hashea en pre-save
+    location, // Asegúrate que 'location' ya venga formateado con códigos numéricos
+    // --- MODIFICACIÓN: Añadir nuevos campos (con validación básica) ---
+    birthDate: birthDate ? new Date(birthDate) : undefined, // Convertir a Date si viene
+    // Asegurarse que gender sea booleano o undefined
+    gender: typeof gender === 'boolean' ? gender : undefined,
+    profilePictureUrl: profilePictureUrl, // Usar URL si viene
+    idCard: idCard || undefined,
+    phoneNumber: phoneNumber || undefined,
+    // --- FIN MODIFICACIÓN ---
+  };
+  // Limpiar campos undefined para no guardarlos si son opcionales
+  Object.keys(newUserInput).forEach(key => newUserInput[key] === undefined && delete newUserInput[key]);
+  if (newUserInput.location) {
+      Object.keys(newUserInput.location).forEach(key => newUserInput.location[key] === undefined && delete newUserInput.location[key]);
+  }
+  // 4. Crear usuario en la DB
+  const user = await User.create(newUserInput);
 
   // 4. Generar token y enviar respuesta
   if (user) {
     const token = generateToken(user._id);
-    res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-      location: user.location,
-      token: token,
-    });
+    // Devolver los datos del usuario creado (excluyendo password por defecto)
+    const userResponse = user.toObject(); // Convertir a objeto plano
+    delete userResponse.password; // Doble check por si 'select: false' fallara
+    res.status(201).json({ ...userResponse, token }); // Enviar datos + token
+    // res.status(201).json({
+    //   _id: user._id,
+    //   name: user.name,
+    //   username: user.username,
+    //   email: user.email,
+    //   role: user.role,
+    //   location: user.location,
+    //   token: token,
+    // });
   } else {
     return next(new AppError('Datos de usuario inválidos', 400)); // Error genérico si falla la creación
   }
@@ -67,6 +90,11 @@ const loginUser = asyncHandler(async (req, res, next) => {
       email: user.email,
       role: user.role,
       location: user.location,
+      birthDate: user.birthDate, 
+      gender: user.gender, 
+      profilePictureUrl:user.profilePictureUrl, 
+      idCard: user.idCard, 
+      phoneNumber: user.phoneNumber, 
       token: token,
     });
   } else {
@@ -88,6 +116,11 @@ const getMe = asyncHandler(async (req, res, next) => {
       email: user.email,
       role: user.role,
       location: user.location,
+      birthDate: user.birthDate, 
+      gender: user.gender, 
+      profilePictureUrl:user.profilePictureUrl, 
+      idCard: user.idCard, 
+      phoneNumber: user.phoneNumber,       
       createdAt: user.createdAt
     });
   } else {

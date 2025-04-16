@@ -1,3 +1,4 @@
+// src/models/NewsArticle.js
 const mongoose = require('mongoose');
 
 const newsArticleSchema = new mongoose.Schema({
@@ -33,11 +34,28 @@ const newsArticleSchema = new mongoose.Schema({
     type: [String],
     index: true,
   },
-  locationScope: { // Ubicación a la que aplica/se refiere la noticia
-    department: { type: String, index: true },
-    province: { type: String, index: true },
-    municipality: { type: String, index: true },
-    zone: String, // Indexar si es necesario buscar por zona
+  locationScope: { // <--- MODIFICADO
+    // Almacenar los CÓDIGOS numéricos
+    departmentCode: { // Renombrado para claridad
+        type: Number,
+        index: true, // Indexar para filtrar por departamento
+        required: false // Hacer opcional, una noticia puede ser nacional
+    },
+    provinceCode: { // Renombrado para claridad
+        type: Number,
+        index: true, // Indexar para filtrar por provincia
+        required: false
+    },
+    municipalityCode: { // Renombrado para claridad
+        type: Number,
+        index: true, // Indexar para filtrar por municipio
+        required: false
+     },
+    zone: { // La zona sigue siendo un String, ya que no tiene código/modelo propio
+        type: String,
+        trim: true,
+        required: false
+    }
   },
   isPublished: {
     type: Boolean,
@@ -48,8 +66,12 @@ const newsArticleSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-// Índice compuesto si se busca frecuentemente por fecha y departamento
-newsArticleSchema.index({ publicationDate: -1, 'locationScope.department': 1 });
+// Actualizar índice compuesto si lo usas
+newsArticleSchema.index({ publicationDate: -1, 'locationScope.departmentCode': 1 });
+// Puedes añadir más índices compuestos si filtras frecuentemente por provincia o municipio
+// newsArticleSchema.index({ 'locationScope.provinceCode': 1, publicationDate: -1 });
+// newsArticleSchema.index({ 'locationScope.municipalityCode': 1, publicationDate: -1 });
+
 
 const NewsArticle = mongoose.model('NewsArticle', newsArticleSchema);
 

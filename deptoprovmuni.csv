@@ -1,0 +1,343 @@
+﻿codDepto,Departamento,CodProv,Provincia,CodMuni,Municipalidad
+1, Chuquisaca,101,Oropeza,10101,Sucre
+1, Chuquisaca,101,Oropeza,10102,Yotala
+1, Chuquisaca,101,Oropeza,10103,Poroma
+1, Chuquisaca,102,Azurduy,10201,Azurduy
+1, Chuquisaca,102,Azurduy,10202,Tarvita
+1, Chuquisaca,103,Zudáñez,10301,Villa Zudáñez
+1, Chuquisaca,103,Zudáñez,10302,Presto
+1, Chuquisaca,103,Zudáñez,10303,Villa Mojocoya
+1, Chuquisaca,103,Zudáñez,10304,Icla
+1, Chuquisaca,104,Tomina,10401,Padilla
+1, Chuquisaca,104,Tomina,10402,Tomina
+1, Chuquisaca,104,Tomina,10403,Sopachuy
+1, Chuquisaca,104,Tomina,10404,Villa Alcalá
+1, Chuquisaca,104,Tomina,10405,El Villar
+1, Chuquisaca,105,Hernando Siles,10501,Monteagudo
+1, Chuquisaca,105,Hernando Siles,10502,Huacareta
+1, Chuquisaca,106,Yamparáez,10601,Tarabuco
+1, Chuquisaca,106,Yamparáez,10602,Yamparáez
+1, Chuquisaca,107,Nor Cinti,10701,Camargo
+1, Chuquisaca,107,Nor Cinti,10702,San Lucas
+1, Chuquisaca,107,Nor Cinti,10703,Incahuasi
+1, Chuquisaca,107,Nor Cinti,10704,Villa Charcas
+1, Chuquisaca,108,Belisario Boeto,10801,Villa Serrano
+1, Chuquisaca,109,Sud Cinti,10901,Villa Abecia
+1, Chuquisaca,109,Sud Cinti,10902,Culpina
+1, Chuquisaca,109,Sud Cinti,10903,Las Carreras
+1, Chuquisaca,110,Luis Calvo,11001,Villa Vaca Guzmán (Muyupampa)
+1, Chuquisaca,110,Luis Calvo,11002,Huacaya
+1, Chuquisaca,110,Luis Calvo,11003,Macharetí
+2, La Paz,201,Murillo,20101,La Paz
+2, La Paz,201,Murillo,20102,Palca
+2, La Paz,201,Murillo,20103,Mecapaca
+2, La Paz,201,Murillo,20104,Achocalla
+2, La Paz,201,Murillo,20105,El Alto
+2, La Paz,202,Omasuyos,20201,Achacachi
+2, La Paz,202,Omasuyos,20202,Ancoraimes
+2, La Paz,202,Omasuyos,20203,Chua Cocani
+2, La Paz,202,Omasuyos,20204,Huarina
+2, La Paz,202,Omasuyos,20205,Santiago de Huata
+2, La Paz,202,Omasuyos,20206,Huatajata
+2, La Paz,203,Pacajes,20301,Coro Coro
+2, La Paz,203,Pacajes,20302,Caquiaviri
+2, La Paz,203,Pacajes,20303,Calacoto
+2, La Paz,203,Pacajes,20304,Comanche
+2, La Paz,203,Pacajes,20305,Charaña
+2, La Paz,203,Pacajes,20306,Waldo Ballivián
+2, La Paz,203,Pacajes,20307,Nazacara de Pacajes
+2, La Paz,203,Pacajes,20308,Callapa
+2, La Paz,204,Camacho,20401,Puerto Acosta
+2, La Paz,204,Camacho,20402,Mocomoco
+2, La Paz,204,Camacho,20403,Puerto Carabuco
+2, La Paz,204,Camacho,20404,Humanata
+2, La Paz,204,Camacho,20405,Escoma
+2, La Paz,205,Muñecas,20501,Chuma
+2, La Paz,205,Muñecas,20502,Ayata
+2, La Paz,205,Muñecas,20503,Aucapata
+2, La Paz,206,Larecaja,20601,Sorata
+2, La Paz,206,Larecaja,20602,Guanay
+2, La Paz,206,Larecaja,20603,Tacacoma
+2, La Paz,206,Larecaja,20604,Quiabaya
+2, La Paz,206,Larecaja,20605,Combaya
+2, La Paz,206,Larecaja,20606,Tipuani
+2, La Paz,206,Larecaja,20607,Mapiri
+2, La Paz,206,Larecaja,20608,Teoponte
+2, La Paz,207,Franz Tamayo,20701,Apolo
+2, La Paz,207,Franz Tamayo,20702,Pelechuco
+2, La Paz,208,Ingavi,20801,Viacha
+2, La Paz,208,Ingavi,20802,Guaqui
+2, La Paz,208,Ingavi,20803,Tiahuanaco
+2, La Paz,208,Ingavi,20804,Desaguadero
+2, La Paz,208,Ingavi,20805,San Andrés de Machaca
+2, La Paz,208,Ingavi,20806,Jesús de Machaca
+2, La Paz,208,Ingavi,20807,Taraco
+2, La Paz,209,Loayza,20901,Luribay
+2, La Paz,209,Loayza,20902,Sapahaqui
+2, La Paz,209,Loayza,20903,Yaco
+2, La Paz,209,Loayza,20904,Malla
+2, La Paz,209,Loayza,20905,Cairoma
+2, La Paz,210,Inquisivi,21001,Inquisivi
+2, La Paz,210,Inquisivi,21002,Quime
+2, La Paz,210,Inquisivi,21003,Cajuata
+2, La Paz,210,Inquisivi,21004,Colquiri
+2, La Paz,210,Inquisivi,21005,Ichoca
+2, La Paz,210,Inquisivi,21006,Licoma Pampa
+2, La Paz,211,Sud Yungas,21101,Chulumani
+2, La Paz,211,Sud Yungas,21102,Irupana
+2, La Paz,211,Sud Yungas,21103,Yanacachi
+2, La Paz,211,Sud Yungas,21104,Palos Blancos
+2, La Paz,211,Sud Yungas,21105,La Asunta
+2, La Paz,212,Los Andes,21201,Pucarani
+2, La Paz,212,Los Andes,21202,Laja
+2, La Paz,212,Los Andes,21203,Batallas
+2, La Paz,212,Los Andes,21204,Puerto Pérez
+2, La Paz,213,Aroma,21301,Sica Sica
+2, La Paz,213,Aroma,21302,Umala
+2, La Paz,213,Aroma,21303,Ayo Ayo
+2, La Paz,213,Aroma,21304,Calamarca
+2, La Paz,213,Aroma,21305,Patacamaya
+2, La Paz,213,Aroma,21306,Colquencha
+2, La Paz,213,Aroma,21307,Collana
+2, La Paz,214,Nor Yungas,21401,Coroico
+2, La Paz,214,Nor Yungas,21402,Coripata
+2, La Paz,215,Iturralde,21501,Ixiamas
+2, La Paz,215,Iturralde,21502,San Buenaventura
+2, La Paz,216,Bautista Saavedra,21601,Charazani
+2, La Paz,216,Bautista Saavedra,21602,Curva
+2, La Paz,217,Manco Kapac,21701,Copacabana
+2, La Paz,217,Manco Kapac,21702,San Pedro de Tiquina
+2, La Paz,217,Manco Kapac,21703,Tito Yupanqui
+2, La Paz,218,Gualberto Villarroel,21801,San Pedro de Curahuara
+2, La Paz,218,Gualberto Villarroel,21802,Papel Pampa
+2, La Paz,218,Gualberto Villarroel,21803,Chacarilla
+2, La Paz,219,General José Manuel Pando,21901,Santiago de Machaca
+2, La Paz,219,General José Manuel Pando,21902,Catacora
+2, La Paz,220,Caranavi,22001,Caranavi
+2, La Paz,220,Caranavi,22002,Alto Beni
+3, Cochabamba,301,Cercado,30101,Cochabamba
+3, Cochabamba,302,Campero,30201,Aiquile
+3, Cochabamba,302,Campero,30202,Pasorapa
+3, Cochabamba,302,Campero,30203,Omereque
+3, Cochabamba,303,Ayopaya,30301,Independencia
+3, Cochabamba,303,Ayopaya,30302,Morochata
+3, Cochabamba,303,Ayopaya,30303,Cocapata
+3, Cochabamba,304,Esteban Arze,30401,Tarata
+3, Cochabamba,304,Esteban Arze,30402,Anzaldo
+3, Cochabamba,304,Esteban Arze,30403,Arbieto
+3, Cochabamba,304,Esteban Arze,30404,Sacabamba
+3, Cochabamba,305,Arani,30501,Arani
+3, Cochabamba,305,Arani,30502,Vacas
+3, Cochabamba,306,Arque,30601,Arque
+3, Cochabamba,306,Arque,30602,Tacopaya
+3, Cochabamba,307,Capinota,30701,Capinota
+3, Cochabamba,307,Capinota,30702,Santiváñez
+3, Cochabamba,307,Capinota,30703,Sicaya
+3, Cochabamba,308,Germán Jordán,30801,Cliza
+3, Cochabamba,308,Germán Jordán,30802,Toco
+3, Cochabamba,308,Germán Jordán,30803,Tolata
+3, Cochabamba,309,Quillacollo,30901,Quillacollo
+3, Cochabamba,309,Quillacollo,30902,Sipe Sipe
+3, Cochabamba,309,Quillacollo,30903,Tiquipaya
+3, Cochabamba,309,Quillacollo,30904,Vinto
+3, Cochabamba,309,Quillacollo,30905,Colcapirhua
+3, Cochabamba,310,Chapare,31001,Sacaba
+3, Cochabamba,310,Chapare,31002,Colomi
+3, Cochabamba,310,Chapare,31003,Villa Tunari
+3, Cochabamba,311,Tapacarí,31101,Tapacarí
+3, Cochabamba,312,Carrasco,31201,Totora
+3, Cochabamba,312,Carrasco,31202,Pojo
+3, Cochabamba,312,Carrasco,31203,Pocona
+3, Cochabamba,312,Carrasco,31204,Chimoré
+3, Cochabamba,312,Carrasco,31205,Puerto Villarroel
+3, Cochabamba,312,Carrasco,31206,Entre Ríos
+3, Cochabamba,313,Mizque,31301,Mizque
+3, Cochabamba,313,Mizque,31302,Vila Vila
+3, Cochabamba,313,Mizque,31303,Alalay
+3, Cochabamba,314,Punata,31401,Punata
+3, Cochabamba,314,Punata,31402,Villa Rivero
+3, Cochabamba,314,Punata,31403,San Benito
+3, Cochabamba,314,Punata,31404,Tacachi
+3, Cochabamba,314,Punata,31405,Cuchumuela
+3, Cochabamba,315,Bolívar,31501,Bolívar
+3, Cochabamba,316,Tiraque,31601,Tiraque
+3, Cochabamba,316,Tiraque,31602,Shinahota
+4, Oruro,401,Cercado,40101,Oruro
+4, Oruro,401,Cercado,40102,Caracollo
+4, Oruro,401,Cercado,40103,El Choro
+4, Oruro,401,Cercado,40104,Paria
+4, Oruro,402,Abaroa,40201,Challapata
+4, Oruro,402,Abaroa,40202,Quillacas
+4, Oruro,403,Carangas,40301,Corque
+4, Oruro,403,Carangas,40302,Choquecota
+4, Oruro,404,Sajama,40401,Curahuara de Carangas
+4, Oruro,404,Sajama,40402,Turco
+4, Oruro,405,Litoral,40501,Huachacalla
+4, Oruro,405,Litoral,40502,Escara
+4, Oruro,405,Litoral,40503,Cruz de Machacamarca
+4, Oruro,405,Litoral,40504,Yunguyo de Litoral
+4, Oruro,405,Litoral,40505,Esmeralda
+4, Oruro,406,Poopó,40601,Poopó
+4, Oruro,406,Poopó,40602,Pazña
+4, Oruro,406,Poopó,40603,Antequera
+4, Oruro,407,Dalence,40701,Huanuni
+4, Oruro,407,Dalence,40702,Machacamarca
+4, Oruro,408,Ladislao Cabrera,40801,Salinas de Garci Mendoza
+4, Oruro,408,Ladislao Cabrera,40802,Pampa Aullagas
+4, Oruro,409,Sabaya,40901,Sabaya
+4, Oruro,409,Sabaya,40902,Coipasa
+4, Oruro,409,Sabaya,40903,Chipaya
+4, Oruro,410,Saucarí,41001,Toledo
+4, Oruro,411,Tomás Barrón,41101,Eucaliptus
+4, Oruro,412,Sud Carangas,41201,Santiago de Andamarca
+4, Oruro,412,Sud Carangas,41202,Belén de Andamarca
+4, Oruro,413,San Pedro de Totora,41301,Totora
+4, Oruro,414,Sebastián Pagador,41401,Santiago de Huari
+4, Oruro,415,Mejillones,41501,La Rivera
+4, Oruro,415,Mejillones,41502,Todos Santos
+4, Oruro,415,Mejillones,41503,Carangas
+4, Oruro,416,Nor Carangas,41601,Huayllamarca
+5, Potosí,501,Tomás Frías,50101,Potosí
+5, Potosí,501,Tomás Frías,50102,Tinguipaya
+5, Potosí,501,Tomás Frías,50103,Yocalla
+5, Potosí,501,Tomás Frías,50104,Urmiri
+5, Potosí,502,Rafael Bustillo,50201,Uncía
+5, Potosí,502,Rafael Bustillo,50202,Chayanta
+5, Potosí,502,Rafael Bustillo,50203,Llallagua
+5, Potosí,502,Rafael Bustillo,50204,Chuquihuta
+5, Potosí,503,Cornelio Saavedra,50301,Betanzos
+5, Potosí,503,Cornelio Saavedra,50302,Chaquí
+5, Potosí,503,Cornelio Saavedra,50303,Tacobamba
+5, Potosí,504,Chayanta,50401,Colquechaca
+5, Potosí,504,Chayanta,50402,Ravelo
+5, Potosí,504,Chayanta,50403,Pocoata
+5, Potosí,504,Chayanta,50404,Ocurí
+5, Potosí,504,Chayanta,50405,San Pedro de Macha
+5, Potosí,505,Charcas,50501,San Pedro de Buena Vista
+5, Potosí,505,Charcas,50502,Toro Toro
+5, Potosí,506,Nor Chichas,50601,Cotagaita
+5, Potosí,506,Nor Chichas,50602,Vitichi
+5, Potosí,507,Alonso de Ibáñez,50701,Sacaca
+5, Potosí,507,Alonso de Ibáñez,50702,Caripuyo
+5, Potosí,508,Sud Chichas,50801,Tupiza
+5, Potosí,508,Sud Chichas,50802,Atocha
+5, Potosí,509,Nor Lípez,50901,Colcha K
+5, Potosí,509,Nor Lípez,50902,San Pedro de Quemes
+5, Potosí,510,Sud Lípez,51001,San Pablo de Lípez
+5, Potosí,510,Sud Lípez,51002,Mojinete
+5, Potosí,510,Sud Lípez,51003,San Antonio de Esmoruco
+5, Potosí,511,Linares,51101,Puna
+5, Potosí,511,Linares,51102,Caiza D
+5, Potosí,511,Linares,51103,Ckochas
+5, Potosí,512,Quijarro,51201,Uyuni
+5, Potosí,512,Quijarro,51202,Tomave
+5, Potosí,512,Quijarro,51203,Porco
+5, Potosí,513,General Bilbao,51301,Arampampa
+5, Potosí,513,General Bilbao,51302,Acasio
+5, Potosí,514,Daniel Campos,51401,Llica
+5, Potosí,514,Daniel Campos,51402,Tahua
+5, Potosí,515,Modesto Omiste,51501,Villazón
+5, Potosí,516,Enrique Baldivieso,51601,San Agustín
+6, Tarija,601,Cercado,60101,Tarija
+6, Tarija,602,Arce,60201,Padcaya
+6, Tarija,602,Arce,60202,Bermejo
+6, Tarija,603,Gran Chaco,60301,Yacuiba
+6, Tarija,603,Gran Chaco,60302,Caraparí
+6, Tarija,603,Gran Chaco,60303,Villa Montes
+6, Tarija,604,José María Avilés,60401,Uriondo
+6, Tarija,604,José María Avilés,60402,Yunchará
+6, Tarija,605,Méndez,60501,San Lorenzo
+6, Tarija,605,Méndez,60502,El Puente
+6, Tarija,606,O'Connor,60601,Entre Ríos
+7, Santa Cruz,701,Andrés Ibáñez,70101,Santa Cruz de la Sierra
+7, Santa Cruz,701,Andrés Ibáñez,70102,Cotoca
+7, Santa Cruz,701,Andrés Ibáñez,70103,Porongo
+7, Santa Cruz,701,Andrés Ibáñez,70104,La Guardia
+7, Santa Cruz,701,Andrés Ibáñez,70105,El Torno
+7, Santa Cruz,702,Warnes,70201,Warnes
+7, Santa Cruz,702,Warnes,70202,Okinawa Uno
+7, Santa Cruz,703,Velasco,70301,San Ignacio de Velasco
+7, Santa Cruz,703,Velasco,70302,San Miguel de Velasco
+7, Santa Cruz,703,Velasco,70303,San Rafael de Velasco
+7, Santa Cruz,704,Ichilo,70401,Buena Vista
+7, Santa Cruz,704,Ichilo,70402,San Carlos
+7, Santa Cruz,704,Ichilo,70403,Villa Yapacaní
+7, Santa Cruz,704,Ichilo,70404,San Juan de Yapacaní
+7, Santa Cruz,705,Chiquitos,70501,San José de Chiquitos
+7, Santa Cruz,705,Chiquitos,70502,Pailón
+7, Santa Cruz,705,Chiquitos,70503,Roboré
+7, Santa Cruz,706,Sara,70601,Portachuelo
+7, Santa Cruz,706,Sara,70602,Santa Rosa del Sara
+7, Santa Cruz,706,Sara,70603,Colpa Bélgica
+7, Santa Cruz,707,Cordillera,70701,Lagunillas
+7, Santa Cruz,707,Cordillera,70702,Charagua
+7, Santa Cruz,707,Cordillera,70703,Cabezas
+7, Santa Cruz,707,Cordillera,70704,Cuevo
+7, Santa Cruz,707,Cordillera,70705,Gutiérrez (Kereimba Iyambae)
+7, Santa Cruz,707,Cordillera,70706,Camiri
+7, Santa Cruz,707,Cordillera,70707,Boyuibe
+7, Santa Cruz,708,Vallegrande,70801,Vallegrande
+7, Santa Cruz,708,Vallegrande,70802,El Trigal
+7, Santa Cruz,708,Vallegrande,70803,Moro Moro
+7, Santa Cruz,708,Vallegrande,70804,Postrervalle
+7, Santa Cruz,708,Vallegrande,70805,Pucará
+7, Santa Cruz,709,Florida,70901,Samaipata
+7, Santa Cruz,709,Florida,70902,Pampagrande
+7, Santa Cruz,709,Florida,70903,Mairana
+7, Santa Cruz,709,Florida,70904,Quirusillas
+7, Santa Cruz,710,Obispo Santistevan,71001,Montero
+7, Santa Cruz,710,Obispo Santistevan,71002,General Saavedra
+7, Santa Cruz,710,Obispo Santistevan,71003,Mineros
+7, Santa Cruz,710,Obispo Santistevan,71004,Fernández Alonso
+7, Santa Cruz,710,Obispo Santistevan,71005,San Pedro
+7, Santa Cruz,711,Ñuflo de Chaves,71101,Concepción
+7, Santa Cruz,711,Ñuflo de Chaves,71102,San Javier
+7, Santa Cruz,711,Ñuflo de Chaves,71103,San Julián
+7, Santa Cruz,711,Ñuflo de Chaves,71104,San Ramón
+7, Santa Cruz,711,Ñuflo de Chaves,71105,San Antonio de Lomerío
+7, Santa Cruz,711,Ñuflo de Chaves,71106,Cuatro Cañadas
+7, Santa Cruz,712,Ángel Sandóval,71201,San Matías
+7, Santa Cruz,713,Caballero,71301,Comarapa
+7, Santa Cruz,713,Caballero,71302,Saipina
+7, Santa Cruz,714,Germán Busch,71401,Puerto Suárez
+7, Santa Cruz,714,Germán Busch,71402,Puerto Quijarro
+7, Santa Cruz,714,Germán Busch,71403,El Carmen Rivero Tórrez
+7, Santa Cruz,715,Guarayos,71501,Ascensión de Guarayos
+7, Santa Cruz,715,Guarayos,71502,Urubichá
+7, Santa Cruz,715,Guarayos,71503,El Puente
+8, Beni,801,Cercado,80101,Trinidad
+8, Beni,801,Cercado,80102,San Javier
+8, Beni,802,Vaca Díez,80201,Riberalta
+8, Beni,802,Vaca Díez,80202,Guayaramerín
+8, Beni,803,General José Ballivián,80301,Reyes
+8, Beni,803,General José Ballivián,80302,San Borja
+8, Beni,803,General José Ballivián,80303,Santa Rosa
+8, Beni,803,General José Ballivián,80304,Rurrenabaque
+8, Beni,804,Yacuma,80401,Santa Ana del Yacuma
+8, Beni,804,Yacuma,80402,Exaltación
+8, Beni,805,Moxos,80501,San Ignacio de Moxos
+8, Beni,806,Marbán,80601,Loreto
+8, Beni,806,Marbán,80602,San Andrés
+8, Beni,807,Mamoré,80701,San Joaquín
+8, Beni,807,Mamoré,80702,San Ramón
+8, Beni,807,Mamoré,80703,Puerto Siles
+8, Beni,808,Iténez,80801,Magdalena
+8, Beni,808,Iténez,80802,Baures
+8, Beni,808,Iténez,80803,Huacaraje
+9, Pando,901,Nicolás Suárez,90101,Cobija
+9, Pando,901,Nicolás Suárez,90102,Porvenir
+9, Pando,901,Nicolás Suárez,90103,Bolpebra
+9, Pando,901,Nicolás Suárez,90104,Bella Flor
+9, Pando,902,Manuripi,90201,Puerto Rico
+9, Pando,902,Manuripi,90202,San Pedro
+9, Pando,902,Manuripi,90203,Filadelfia
+9, Pando,903,Madre de Dios,90301,Puerto Gonzalo Moreno
+9, Pando,903,Madre de Dios,90302,San Lorenzo
+9, Pando,903,Madre de Dios,90303,Sena
+9, Pando,904,Abuná,90401,Santa Rosa del Abuná
+9, Pando,904,Abuná,90402,Ingavi
+9, Pando,905,General Federico Román,90501,Nueva Esperanza
+9, Pando,905,General Federico Román,90502,Villa Nueva
+9, Pando,905,General Federico Román,90503,Santos Mercado
+,,,,,
+,,,,Véase también,

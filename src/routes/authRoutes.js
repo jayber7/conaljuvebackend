@@ -4,9 +4,41 @@ const { body } = require('express-validator');
 const { registerUser, loginUser, getMe } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 const { handleValidationErrors } = require('../middleware/validationMiddleware');
+const { upload } = require('../config/cloudinaryConfig'); // Ajusta la ruta si es necesario
 
 const router = express.Router();
+// Reglas de validación para registro
+const registerValidation = [
+    // --- Validaciones existentes ---
+    body('name', 'El nombre es requerido').not().isEmpty().trim().escape(),
+    body('username', 'Usuario requerido').not().isEmpty().trim().escape(),
+    body('email', 'Correo inválido').isEmail().normalizeEmail(),
+    body('password', 'Contraseña mín. 6 caracteres').isLength({ min: 6 }),
+    body('location.departmentCode', 'Código Dept. requerido').not().isEmpty().isInt({ min: 0 }).toInt(),
+    body('location.provinceCode', 'Código Prov. inválido').optional().isInt({ min: 0 }).toInt(),
+    body('location.municipalityCode', 'Código Muni. inválido').optional().isInt({ min: 0 }).toInt(),
+    body('location.zone').optional().isString().trim().escape(),
 
+    // --- NUEVAS VALIDACIONES ---
+    body('birthDate', 'Fecha de nacimiento inválida (YYYY-MM-DD)')
+        .optional({ checkFalsy: true }) // Hacerla opcional (elimina si es req.)
+        .isISO8601() // Espera formato YYYY-MM-DD o completo ISO
+        .toDate(), // Convertir a objeto Date
+    body('gender', 'Género inválido')
+        .optional()
+        .isBoolean().withMessage('Debe ser true o false'), // Validar que sea booleano si se envía
+    body('profilePictureUrl', 'URL de foto inválida')
+        .optional({ checkFalsy: true })
+        .isURL(),
+    body('idCard', 'Número de carnet inválido')
+        .optional({ checkFalsy: true }) // Hacerlo opcional
+        .isString().trim().escape(), // Ajusta validación si tiene formato específico
+    body('phoneNumber', 'Número de celular inválido')
+        .optional({ checkFalsy: true })
+        .isString().trim().escape() // Validación simple, puede mejorarse
+        // .matches(/^\+?[0-9\s\-()]+$/).withMessage('Formato de teléfono inválido'), // Ejemplo validación más estricta
+    // --- FIN NUEVAS VALIDACIONES ---
+];
 // --- Documentación de Schemas para request bodies ---
 /**
  * @swagger
@@ -122,8 +154,8 @@ const router = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-const registerValidation = [ /* ... tus reglas de validación ... */ ];
-router.post('/register', registerValidation, handleValidationErrors, registerUser);
+
+router.post('/register', upload.single('profilePicture'), registerValidation, handleValidationErrors, registerUser);
 
 
 /**

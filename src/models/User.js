@@ -32,20 +32,65 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['USER', 'ADMIN'],
+    // --- MODIFICACIÓN: Añadir STAFF ---
+    enum: ['USER', 'STAFF', 'ADMIN'],
+    // --- FIN MODIFICACIÓN ---
     default: 'USER',
   },
-  location: {
-    department: { type: String, required: [true, 'El departamento es requerido'] },
-    province: String,
-    municipality: String,
-    zone: String,
-    // Opcional: coordinates: { lat: Number, lng: Number }
+  location: { // <--- MODIFICADO
+    departmentCode: { // Renombrado y cambiado a Number
+        type: Number,
+        required: [true, 'El código de departamento es requerido'],
+        index: true // Indexar si buscas usuarios por depto
+    },
+    provinceCode: { // Renombrado y cambiado a Number
+        type: Number,
+        required: false, // Hacer opcional si no siempre se captura/requiere
+        index: true
+    },
+    municipalityCode: { // Renombrado y cambiado a Number
+        type: Number,
+        required: false,
+        index: true
+     },
+    zone: { // Zona sigue siendo String
+        type: String,
+        trim: true,
+        required: false
+    },
+    // coordinates: { lat: Number, lng: Number } // Mantenidas si las necesitas
   },
   isActive: {
     type: Boolean,
     default: true,
   },
+  birthDate: {
+    type: Date, // Almacenar como objeto Date completo
+    required: false // O true si es obligatorio
+  },
+  gender: { // true: Varón, false: Mujer, null/undefined: No especificado
+    type: Boolean,
+    required: false // Hacerlo opcional
+  },
+  profilePictureUrl: { // Almacenaremos la URL de la imagen
+    type: String,
+    required: false,
+    // Podrías añadir validación de URL aquí si quieres
+  },
+  idCard: { // Carnet de Identidad
+    type: String,
+    trim: true,
+    required: false, // O true si es obligatorio
+    index: true, // Indexar si necesitas buscar por CI (considera unicidad si aplica)
+    // unique: true, // Añade si el CI DEBE ser único
+  },
+  phoneNumber: {
+    type: String, // Guardar como String para flexibilidad de formato (+591, etc.)
+    trim: true,
+    required: false,
+    // Puedes añadir validación de formato de teléfono si es necesario
+    // match: [/^\+?[0-9\s\-()]+$/, 'Número de teléfono inválido'],
+  }
 }, {
   timestamps: true, // Añade createdAt y updatedAt automáticamente
 });

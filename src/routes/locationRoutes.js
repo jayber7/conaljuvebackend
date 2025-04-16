@@ -13,10 +13,10 @@ const router = express.Router();
 
 // Validación para parámetros de query
 const provinceQueryValidation = [
-    query('departmentId', 'Se requiere departmentId').not().isEmpty().trim().escape()
+    query('departmentCode', 'Se requiere departmentCode').not().isEmpty().trim().escape()
 ];
 const municipalityQueryValidation = [
-    query('provinceId', 'Se requiere provinceId').not().isEmpty().trim().escape()
+    query('provinceCode', 'Se requiere provinceCode').not().isEmpty().trim().escape()
 ];
 const suggestionQueryValidation = [
     query('lat', 'Se requiere latitud (lat)').isFloat(),

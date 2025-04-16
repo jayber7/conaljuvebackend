@@ -1,6 +1,6 @@
 // src/routes/newsRoutes.js
 const express = require('express');
-const { body, param } = require('express-validator');
+const { body, param, query } = require('express-validator');
 const {
   getNews,
   getNewsById,
@@ -10,8 +10,8 @@ const {
 } = require('../controllers/newsController');
 const { protect } = require('../middleware/authMiddleware');
 const { admin } = require('../middleware/adminMiddleware'); // Middleware de rol Admin
+const { staffOrAdmin } = require('../middleware/staffOrAdminMiddleware');
 const { handleValidationErrors } = require('../middleware/validationMiddleware');
-
 const router = express.Router();
 // Reglas de validación para crear/actualizar noticia
 const newsValidation = [
@@ -33,7 +33,17 @@ const newsValidation = [
 const idParamValidation = [
     param('id', 'ID inválido').isMongoId()
 ];
-
+// --- MODIFICACIÓN: Validación para Query Params de Ubicación ---
+const locationQueryValidation = [
+    query('locationScope.departmentCode', 'Filtro de departamento inválido').optional().isInt({ min: 0 }),
+    query('locationScope.provinceCode', 'Filtro de provincia inválido').optional().isInt({ min: 0 }),
+    query('locationScope.municipalityCode', 'Filtro de municipio inválido').optional().isInt({ min: 0 }),
+    // Puedes añadir validación para otros query params como page, limit, sort
+    query('page').optional().isInt({ min: 1 }).toInt(),
+    query('limit').optional().isInt({ min: 1, max: 100 }).toInt(), // Limitar el máx limit
+    query('sort').optional().isString().trim().escape(),
+];
+// --- FIN MODIFICACIÓN ---
 
 /**
  * @swagger
@@ -112,8 +122,9 @@ const idParamValidation = [
  *       500:
  *          description: Error interno del servidor.
  */
-
-router.get('/', getNews);
+// Rutas públicas
+router.get('/', locationQueryValidation, handleValidationErrors, getNews); // Añadir validación de query
+//router.get('/', getNews);
 
 /**
  * @swagger
@@ -156,8 +167,8 @@ router.get('/', getNews);
  *       500:
  *         description: Error interno del servidor.
  */
-router.get('/:id', /* validaciones */ getNewsById);
-
+//router.get('/:id', /* validaciones */ getNewsById);
+router.get('/:id', idParamValidation, handleValidationErrors, getNewsById);
 /**
  * @swagger
  * /news:
@@ -192,11 +203,18 @@ router.get('/:id', /* validaciones */ getNewsById);
  *       500: { $ref: '#/components/responses/ServerError' }
  */
 // Define respuestas reutilizables en swaggerConfig.js -> components -> responses
-router.post('/', protect, admin, /* validaciones */ createNews);
-
-// --- Documenta PUT y DELETE de manera similar ---
-// PUT /news/{id} (Admin)
-// DELETE /news/{id} (Admin)
-router.put('/:id', protect, admin, idParamValidation, newsValidation, handleValidationErrors, updateNews);
+// router.post('/', protect, admin, /* validaciones */ createNews);
+// router.put('/:id', protect, admin, idParamValidation, newsValidation, handleValidationErrors, updateNews);
+// router.delete('/:id', protect, admin, idParamValidation, handleValidationErrors, deleteNews);
+// Rutas protegidas para Admin
+router.post('/', protect, staffOrAdmin, newsValidation, handleValidationErrors, createNews);
+router.put('/:id', protect, staffOrAdmin, idParamValidation, newsValidation, handleValidationErrors, updateNews);
 router.delete('/:id', protect, admin, idParamValidation, handleValidationErrors, deleteNews);
+// --- Rutas Protegidas por Rol ---
+// STAFF o ADMIN pueden Crear y Actualizar
+router.post('/', protect, staffOrAdmin, newsValidation, handleValidationErrors, createNews);
+router.put('/:id', protect, staffOrAdmin, idParamValidation, newsValidation, handleValidationErrors, updateNews);
+// Solo ADMIN puede Eliminar
+router.delete('/:id', protect, admin, idParamValidation, handleValidationErrors, deleteNews);
+// --- FIN Rutas Protegidas ---
 module.exports = router;
