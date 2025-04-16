@@ -158,8 +158,18 @@ const getNewsById = asyncHandler(async (req, res, next) => {
 // @access  Private/Admin
 const createNews = asyncHandler(async (req, res, next) => {
   // --- MODIFICACIÓN: Asegurar que los códigos de ubicación sean números ---
-  const { title, summary, content, imageUrl, publicationDate, tags, locationScope, isPublished } = req.body;
-
+  const { title, summary, content, publicationDate, tags, locationScope, isPublished } = req.body;
+  const imageFile = req.files?.newsImage?.[0]; // Acceder al primer archivo del campo 'newsImage'
+  const pdfFile = req.files?.newsPdf?.[0];   // Acceder al primer archivo del campo 'newsPdf'
+   // Obtener URLs de Cloudinary si los archivos se subieron
+   const imageUrl = imageFile ? imageFile.path : undefined;
+   const pdfUrl = pdfFile ? pdfFile.path : undefined;
+ 
+   // --- VALIDACIÓN: Asegurarse que content o pdfUrl existan ---
+   // (El hook pre-validate del modelo también lo hará, pero podemos verificar aquí)
+   if (!content && !pdfUrl) {
+       return next(new AppError('Se debe proporcionar contenido escrito o subir un archivo PDF.', 400));
+   }
   // Convertir códigos de ubicación a números (si vienen como string del form)
   const formattedLocationScope = locationScope ? {
       departmentCode: parseQueryNumber(locationScope.departmentCode), // Usar helper
@@ -173,18 +183,23 @@ const createNews = asyncHandler(async (req, res, next) => {
  // --- FIN MODIFICACIÓN ---
 
 
-  const newArticle = await NewsArticle.create({
+  const newArticleData = await NewsArticle.create({
     title,
     summary,
     content,
     imageUrl,
+    pdfUrl: pdfUrl,
     publicationDate: publicationDate || Date.now(),
     tags,
     locationScope: formattedLocationScope, // Usar el objeto formateado
     author: req.user._id,
-    isPublished: isPublished !== undefined ? isPublished : true,
+    isPublished: isPublished !== undefined ? (String(isPublished).toLowerCase() === 'true') : true, // Convertir string de form-data a boolean
+    //isPublished: isPublished !== undefined ? isPublished : true,
   });
+   // Limpiar campos undefined
+   Object.keys(newArticleData).forEach(key => newArticleData[key] === undefined && delete newArticleData[key]);
 
+  const newArticle = await NewsArticle.create(newArticleData);
   // Opcional: Poblar autor para la respuesta
   const populatedArticle = await NewsArticle.findById(newArticle._id)
                                              .populate('author', 'name username')
@@ -201,61 +216,78 @@ const createNews = asyncHandler(async (req, res, next) => {
 
 // @desc    Actualizar una noticia
 // @route   PUT /api/news/:id
-// @access  Private/Admin
-// --- updateNews ---
+// @access  Private/StaffOrAdmin
 const updateNews = asyncHandler(async (req, res, next) => {
-  const allowedUpdates = { ...req.body };
-  delete allowedUpdates.author;
+  const { title, summary, content, publicationDate, tags, locationScope, isPublished } = req.body;
+  const imageFile = req.files?.newsImage?.[0];
+  const pdfFile = req.files?.newsPdf?.[0];
 
-   if (allowedUpdates.locationScope) {
-       allowedUpdates.locationScope = {
-           departmentCode: parseQueryNumber(allowedUpdates.locationScope.departmentCode),
-           provinceCode: parseQueryNumber(allowedUpdates.locationScope.provinceCode),
-           municipalityCode: parseQueryNumber(allowedUpdates.locationScope.municipalityCode),
-           zone: allowedUpdates.locationScope.zone?.trim() || undefined
-       };
-        Object.keys(allowedUpdates.locationScope).forEach(key => allowedUpdates.locationScope[key] === undefined && delete allowedUpdates.locationScope[key]);
-   }
-
-  // Primero actualiza y obtén el documento actualizado
-  const updatedNewsArticle = await NewsArticle.findByIdAndUpdate(
-      req.params.id,
-      allowedUpdates,
-      { new: true, runValidators: true }
-  ).populate('author', 'name username').lean(); // Aún necesitas poblar autor aquí
-
-  if (!updatedNewsArticle) {
-    return next(new AppError('Noticia no encontrada para actualizar', 404));
+  // Buscar noticia existente
+  const newsArticle = await NewsArticle.findById(req.params.id);
+  if (!newsArticle) {
+      return next(new AppError('Noticia no encontrada para actualizar', 404));
   }
 
-  // --- LÓGICA COMPLETA PARA POBLAR NOMBRES DE UBICACIÓN (igual que en getNewsById) ---
-  let populatedLocationScope = { ...updatedNewsArticle.locationScope };
+  // Construir objeto de actualización
+  const updates = {};
+  if (title !== undefined) updates.title = title;
+  if (summary !== undefined) updates.summary = summary;
+  // Si se envía nuevo 'content', usarlo. Si se envía un PDF *nuevo*, ¿borrar content antiguo? Decisión de diseño.
+  // Opción: Borrar content si se sube un PDF nuevo.
+  if (pdfFile) {
+      updates.pdfUrl = pdfFile.path;
+      // Decide si borrar el content:
+      // updates.content = undefined; // O usar $unset: updates.$unset = { content: 1 };
+  } else if (content !== undefined) {
+      // Solo actualizar content si NO se subió un PDF nuevo en esta petición
+      updates.content = content;
+      // Decide si borrar pdfUrl si se actualiza el content:
+      // updates.pdfUrl = undefined; // O $unset: updates.$unset = { pdfUrl: 1 };
+  }
 
-  const [dept, prov, muni] = await Promise.all([
-      updatedNewsArticle.locationScope?.departmentCode
-          ? Department.findOne({ code: updatedNewsArticle.locationScope.departmentCode }).select('name').lean()
-          : Promise.resolve(null),
-      updatedNewsArticle.locationScope?.provinceCode
-          ? Province.findOne({ code: updatedNewsArticle.locationScope.provinceCode }).select('name').lean()
-          : Promise.resolve(null),
-      updatedNewsArticle.locationScope?.municipalityCode
-          ? Municipality.findOne({ code: updatedNewsArticle.locationScope.municipalityCode }).select('name').lean()
-          : Promise.resolve(null)
-  ]);
+   // Actualizar imagen si se subió una nueva
+  if (imageFile) {
+      updates.imageUrl = imageFile.path;
+      // Opcional: Borrar imagen antigua de Cloudinary (requiere lógica adicional)
+  }
+  if (publicationDate !== undefined) updates.publicationDate = publicationDate;
+  if (tags !== undefined) updates.tags = tags; // Asume que tags viene como array o string formateable
+  if (isPublished !== undefined) updates.isPublished = String(isPublished).toLowerCase() === 'true';
 
-  populatedLocationScope.departmentName = dept?.name || null;
-  populatedLocationScope.provinceName = prov?.name || null;
-  populatedLocationScope.municipalityName = muni?.name || null;
-  // --- FIN LÓGICA COMPLETA ---
+  // Actualizar locationScope si se envió
+  if (locationScope) {
+      updates.locationScope = {};
+      if (locationScope.departmentCode !== undefined) updates.locationScope.departmentCode = parseQueryNumber(locationScope.departmentCode);
+      if (locationScope.provinceCode !== undefined) updates.locationScope.provinceCode = parseQueryNumber(locationScope.provinceCode);
+      if (locationScope.municipalityCode !== undefined) updates.locationScope.municipalityCode = parseQueryNumber(locationScope.municipalityCode);
+      if (locationScope.zone !== undefined) updates.locationScope.zone = locationScope.zone.trim() || undefined;
+      Object.keys(updates.locationScope).forEach(key => updates.locationScope[key] === undefined && delete updates.locationScope[key]);
+       if (Object.keys(updates.locationScope).length === 0) delete updates.locationScope; // No guardar objeto vacío
+  }
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-       // Enviar el artículo actualizado con los nombres de ubicación poblados
-       news: { ...updatedNewsArticle, locationScope: populatedLocationScope },
-    },
-  });
+   // --- VALIDACIÓN: Asegurar que content o pdfUrl existan después de la actualización ---
+   const finalContent = updates.content !== undefined ? updates.content : newsArticle.content;
+   const finalPdfUrl = updates.pdfUrl !== undefined ? updates.pdfUrl : newsArticle.pdfUrl;
+   if (!finalContent && !finalPdfUrl) {
+        return next(new AppError('La noticia debe tener contenido escrito o un archivo PDF adjunto.', 400));
+   }
+   // --- FIN VALIDACIÓN ---
+
+
+  // Realizar la actualización
+  const updatedArticle = await NewsArticle.findByIdAndUpdate(
+      req.params.id,
+      updates, // Solo los campos a actualizar
+      // { $set: updates }, // Alternativa explícita
+      { new: true, runValidators: true }
+  ).populate('author', 'name username').lean();
+
+   // ... (poblar nombres de ubicación para la respuesta como en getNewsById) ...
+   let populatedLocationScope = { ...updatedArticle.locationScope };
+   // ... (código Promise.all para buscar nombres) ...
+   res.status(200).json({ status: 'success', data: { news: { ...updatedArticle, locationScope: populatedLocationScope } } });
 });
+
 // @desc    Eliminar una noticia
 // @route   DELETE /api/news/:id
 // @access  Private/Admin

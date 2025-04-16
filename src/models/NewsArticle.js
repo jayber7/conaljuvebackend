@@ -13,7 +13,7 @@ const newsArticleSchema = new mongoose.Schema({
   },
   content: {
     type: String,
-    required: [true, 'El contenido es requerido'],
+    // required: [true, 'El contenido es requerido'],
   },
   imageUrl: {
     type: String,
@@ -62,6 +62,10 @@ const newsArticleSchema = new mongoose.Schema({
     default: true,
     index: true,
   },
+  pdfUrl: {
+    type: String, // URL del PDF almacenado en Cloudinary u otro servicio
+    required: false,
+  },
 }, {
   timestamps: true,
 });
@@ -71,7 +75,13 @@ newsArticleSchema.index({ publicationDate: -1, 'locationScope.departmentCode': 1
 // Puedes añadir más índices compuestos si filtras frecuentemente por provincia o municipio
 // newsArticleSchema.index({ 'locationScope.provinceCode': 1, publicationDate: -1 });
 // newsArticleSchema.index({ 'locationScope.municipalityCode': 1, publicationDate: -1 });
-
+newsArticleSchema.pre('validate', function(next) {
+  if (!this.content && !this.pdfUrl) {
+    next(new Error('Se requiere proporcionar contenido escrito o subir un archivo PDF.'));
+  } else {
+    next();
+  }
+});
 
 const NewsArticle = mongoose.model('NewsArticle', newsArticleSchema);
 

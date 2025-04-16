@@ -15,49 +15,58 @@ cloudinary.config({
 });
 
 // Configurar el almacenamiento de Multer para Cloudinary
+// --- MODIFICACIÓN STORAGE ---
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (req, file) => {
-    // Función para determinar parámetros de subida dinámicamente
+    let folder;
+    let allowedFormats;
+    let transformation;
 
-    // 1. Carpeta en Cloudinary (ej. basada en el tipo de subida o usuario)
-    let folder = 'conaljuve/profile_pictures'; // Carpeta base para fotos de perfil
+    // Determinar carpeta y formatos según el campo del formulario
+    if (file.fieldname === 'newsPdf') { // Campo específico para PDF de noticias
+      folder = 'conaljuve/news_pdfs';
+      allowedFormats = ['pdf'];
+      transformation = undefined; // No aplicar transformación de imagen a PDFs
+      console.log(`Subiendo PDF (${file.originalname}) a carpeta: ${folder}`);
+    } else if (file.fieldname === 'newsImage') { // Campo específico para imagen de noticia
+      folder = 'conaljuve/news_images';
+      allowedFormats = ['jpg', 'png', 'jpeg', 'gif', 'webp'];
+      // Transformación opcional para imágenes
+      transformation = [{ width: 1200, height: 630, crop: 'limit', quality: 'auto' }];
+       console.log(`Subiendo Imagen (${file.originalname}) a carpeta: ${folder}`);
+    } else if (file.fieldname === 'profilePicture') { // Para fotos de perfil (existente)
+        folder = 'conaljuve/profile_pictures';
+        allowedFormats = ['jpg', 'png', 'jpeg', 'gif', 'webp'];
+        transformation = [{ width: 500, height: 500, crop: 'limit', quality: 'auto' }];
+        console.log(`Subiendo Foto Perfil (${file.originalname}) a carpeta: ${folder}`);
+    } else {
+      // Carpeta por defecto o error si el campo no es esperado
+      folder = 'conaljuve/uploads_misc';
+      allowedFormats = ['jpg', 'png', 'pdf']; // Permitir varios por defecto
+      transformation = undefined;
+       console.log(`Subiendo archivo genérico (${file.originalname}) a carpeta: ${folder}`);
+    }
 
-    // 2. Nombre de archivo (opcional, Cloudinary genera uno único por defecto)
-    // Puedes generar un nombre único basado en el userId (si estuviera disponible aquí) o timestamp
-    // let filename = `user-${req.user?._id}-${Date.now()}`;
-
-    // 3. Formatos permitidos (Cloudinary puede transformar, pero es bueno validar)
-    let allowedFormats = ['jpg', 'png', 'jpeg', 'gif', 'webp'];
-
-    // 4. Transformaciones opcionales al subir (ej. redimensionar)
-    let transformation = [{ width: 500, height: 500, crop: 'limit', quality: 'auto' }]; // Redimensionar a 500px max, calidad auto
-
-    return {
-      folder: folder,
-    //   public_id: filename, // Descomentar si quieres nombres personalizados
-      allowed_formats: allowedFormats,
-      transformation: transformation,
-      // Puedes añadir más parámetros de la API de subida de Cloudinary aquí
-      // https://cloudinary.com/documentation/image_upload_api_reference#upload_optional_parameters
-    };
+    return { folder, allowed_formats: allowedFormats, transformation };
   },
 });
+// --- FIN MODIFICACIÓN STORAGE ---
 
 // Crear el middleware de Multer usando el storage de Cloudinary
+// --- MODIFICACIÓN UPLOAD (Sigue igual, pero se usará con .fields()) ---
 const upload = multer({
-    storage: storage,
-    limits: {
-        fileSize: 1024 * 1024 * 5 // Límite de tamaño de archivo (ej: 5MB)
-    },
-    fileFilter: (req, file, cb) => {
-        // Validar tipo de archivo (MIME type)
-        if (file.mimetype.startsWith('image/')) {
-            cb(null, true); // Aceptar archivo
-        } else {
-            cb(new Error('Formato de archivo no soportado. Solo se permiten imágenes.'), false); // Rechazar archivo
-        }
-    }
+  storage: storage,
+  limits: { fileSize: 1024 * 1024 * 10 }, // Aumentar límite para PDFs (ej: 10MB)
+  fileFilter: (req, file, cb) => {
+      // Permitir tipos MIME de imagen Y PDF
+      if (file.mimetype.startsWith('image/') || file.mimetype === 'application/pdf') {
+          cb(null, true);
+      } else {
+          cb(new Error('Formato no soportado. Solo imágenes o PDF.'), false);
+      }
+  }
 });
+// --- FIN MODIFICACIÓN UPLOAD ---
 
 module.exports = { upload, cloudinary }; // Exportar upload y la instancia configurada de cloudinary

@@ -12,12 +12,14 @@ const { protect } = require('../middleware/authMiddleware');
 const { admin } = require('../middleware/adminMiddleware'); // Middleware de rol Admin
 const { staffOrAdmin } = require('../middleware/staffOrAdminMiddleware');
 const { handleValidationErrors } = require('../middleware/validationMiddleware');
+const { upload } = require('../config/cloudinaryConfig'); // Importar upload
+
 const router = express.Router();
 // Reglas de validación para crear/actualizar noticia
 const newsValidation = [
     body('title', 'El título es requerido').not().isEmpty().trim().escape(),
     body('summary', 'El resumen es requerido').not().isEmpty().trim().escape(),
-    body('content', 'El contenido es requerido').not().isEmpty(), // No escapar HTML si usas editor enriquecido
+    body('content', 'El contenido es requerido').optional().isString(), // No escapar HTML si usas editor enriquecido
     body('imageUrl', 'URL de imagen inválida').optional({ checkFalsy: true }).isURL(),
     body('publicationDate', 'Fecha de publicación inválida').optional().isISO8601().toDate(),
     body('tags').optional().isArray().withMessage('Las etiquetas deben ser un array'),
@@ -207,8 +209,8 @@ router.get('/:id', idParamValidation, handleValidationErrors, getNewsById);
 // router.put('/:id', protect, admin, idParamValidation, newsValidation, handleValidationErrors, updateNews);
 // router.delete('/:id', protect, admin, idParamValidation, handleValidationErrors, deleteNews);
 // Rutas protegidas para Admin
-router.post('/', protect, staffOrAdmin, newsValidation, handleValidationErrors, createNews);
-router.put('/:id', protect, staffOrAdmin, idParamValidation, newsValidation, handleValidationErrors, updateNews);
+router.post('/', protect, staffOrAdmin, upload.fields([{ name: 'newsImage', maxCount: 1 },{ name: 'newsPdf', maxCount: 1 }]),newsValidation, handleValidationErrors, createNews);
+router.put('/:id', protect, staffOrAdmin,upload.fields([{ name: 'newsImage', maxCount: 1 },{ name: 'newsPdf', maxCount: 1 }]), idParamValidation, newsValidation, handleValidationErrors, updateNews);
 router.delete('/:id', protect, admin, idParamValidation, handleValidationErrors, deleteNews);
 // --- Rutas Protegidas por Rol ---
 // STAFF o ADMIN pueden Crear y Actualizar
