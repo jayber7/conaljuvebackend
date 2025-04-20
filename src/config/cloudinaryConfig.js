@@ -22,13 +22,14 @@ const storage = new CloudinaryStorage({
     let folder;
     let allowedFormats;
     let transformation;
-
+    let resource_type = 'auto'; // Default a 'auto', Cloudinary intentará detectar
     // Determinar carpeta y formatos según el campo del formulario
     if (file.fieldname === 'newsPdf') { // Campo específico para PDF de noticias
       folder = 'conaljuve/news_pdfs';
       allowedFormats = ['pdf'];
+      resource_type = 'raw'; // <-- ¡IMPORTANTE! Indicar que es un archivo raw
       transformation = undefined; // No aplicar transformación de imagen a PDFs
-      console.log(`Subiendo PDF (${file.originalname}) a carpeta: ${folder}`);
+      console.log(`Subiendo PDF (${file.originalname}) a carpeta: ${folder} como ${resource_type}`);
     } else if (file.fieldname === 'newsImage') { // Campo específico para imagen de noticia
       folder = 'conaljuve/news_images';
       allowedFormats = ['jpg', 'png', 'jpeg', 'gif', 'webp'];
@@ -38,17 +39,19 @@ const storage = new CloudinaryStorage({
     } else if (file.fieldname === 'profilePicture') { // Para fotos de perfil (existente)
         folder = 'conaljuve/profile_pictures';
         allowedFormats = ['jpg', 'png', 'jpeg', 'gif', 'webp'];
+        resource_type = 'image'; // <-- Ser explícito para imágenes
         transformation = [{ width: 500, height: 500, crop: 'limit', quality: 'auto' }];
         console.log(`Subiendo Foto Perfil (${file.originalname}) a carpeta: ${folder}`);
     } else {
       // Carpeta por defecto o error si el campo no es esperado
       folder = 'conaljuve/uploads_misc';
       allowedFormats = ['jpg', 'png', 'pdf']; // Permitir varios por defecto
+      resource_type = 'auto'; // Dejar que Cloudinary detecte
       transformation = undefined;
-       console.log(`Subiendo archivo genérico (${file.originalname}) a carpeta: ${folder}`);
+      console.log(`Subiendo archivo genérico (${file.originalname}) a carpeta: ${folder} como ${resource_type}`);
     }
 
-    return { folder, allowed_formats: allowedFormats, transformation };
+    return { folder, allowed_formats: allowedFormats, transformation, resource_type };
   },
 });
 // --- FIN MODIFICACIÓN STORAGE ---
