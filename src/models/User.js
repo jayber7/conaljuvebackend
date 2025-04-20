@@ -58,6 +58,15 @@ const userSchema = new mongoose.Schema({
         trim: true,
         required: false
     },
+    idCardExtension: { // Extensión del Carnet (LP, CB, SC, etc.)
+      type: String,
+      uppercase: true, // Guardar en mayúsculas
+      trim: true,
+      required: false, // Hacer obligatorio solo si idCard también lo es?
+      // Podrías usar un enum si quieres limitar a los códigos de departamento válidos
+      enum: ['LP', 'CB', 'SC', 'OR', 'PO', 'CH', 'TJ', 'BE', 'PA', ''], // Permitir vacío si es opcional
+      index: true, // Indexar si buscas por extensión
+    },
     // coordinates: { lat: Number, lng: Number } // Mantenidas si las necesitas
   },
   isActive: {

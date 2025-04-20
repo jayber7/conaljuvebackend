@@ -5,6 +5,7 @@ const { registerUser, loginUser, getMe } = require('../controllers/authControlle
 const { protect } = require('../middleware/authMiddleware');
 const { handleValidationErrors } = require('../middleware/validationMiddleware');
 const { upload } = require('../config/cloudinaryConfig'); // Ajusta la ruta si es necesario
+const validDepartmentCodes = ['LP', 'CB', 'SC', 'OR', 'PO', 'CH', 'TJ', 'BE', 'PA'];
 
 const router = express.Router();
 // Reglas de validación para registro
@@ -33,6 +34,12 @@ const registerValidation = [
     body('idCard', 'Número de carnet inválido')
         .optional({ checkFalsy: true }) // Hacerlo opcional
         .isString().trim().escape(), // Ajusta validación si tiene formato específico
+    body('idCardExtension', 'Extensión de CI inválida')
+        .optional({ checkFalsy: true }) // Hacer opcional si no siempre se requiere
+        .isString()
+        .trim()
+        .toUpperCase() // Convertir a mayúsculas antes de validar
+        .isIn(validDepartmentCodes).withMessage(`La extensión debe ser uno de los códigos de departamento: ${validDepartmentCodes.join(', ')}`),
     body('phoneNumber', 'Número de celular inválido')
         .optional({ checkFalsy: true })
         .isString().trim().escape() // Validación simple, puede mejorarse

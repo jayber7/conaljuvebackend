@@ -8,7 +8,7 @@ const AppError = require('../utils/appError.js');
 // @route   POST /api/auth/register
 // @access  Public
 const registerUser = asyncHandler(async (req, res, next) => {
-  const { name, username, email, password, location, birthDate, gender, idCard, phoneNumber } = req.body;
+  const { name, username, email, password, location, birthDate, gender, idCard, idCardExtension, phoneNumber } = req.body;
 
   // La información del archivo subido (si existe) está en req.file
   // multer-storage-cloudinary añade la propiedad 'path' con la URL segura de Cloudinary
@@ -35,6 +35,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
     gender: typeof gender === 'boolean' ? gender : undefined,
     profilePictureUrl: profilePictureUrl, // Usar URL si viene
     idCard: idCard || undefined,
+    idCardExtension: idCardExtension ? idCardExtension.toUpperCase().trim() : undefined, // <-- Guardar si existe, en mayúsculas
     phoneNumber: phoneNumber || undefined,
     // --- FIN MODIFICACIÓN ---
   };
