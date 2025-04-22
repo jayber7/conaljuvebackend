@@ -6,14 +6,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'El nombre es requerido'],
   },
-  username: {
-    type: String,
-    required: [true, 'El nombre de usuario es requerido'],
-    unique: true,
-    trim: true,
-    lowercase: true,
-    index: true,
-  },
+  // username: {
+  //   type: String,
+  //   required: [true, 'El nombre de usuario es requerido'],
+  //   unique: true,
+  //   trim: true,
+  //   lowercase: true,
+  //   index: true,
+  // },
   email: {
     type: String,
     required: [true, 'El correo electrónico es requerido'],
@@ -24,12 +24,12 @@ const userSchema = new mongoose.Schema({
     // Validación simple de formato email
     match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Por favor ingrese un correo válido'],
   },
-  password: {
-    type: String,
-    required: [true, 'La contraseña es requerida'],
-    minlength: [6, 'La contraseña debe tener al menos 6 caracteres'],
-    select: false, // No incluir la contraseña por defecto en las consultas
-  },
+  // password: {
+  //   type: String,
+  //   required: [true, 'La contraseña es requerida'],
+  //   minlength: [6, 'La contraseña debe tener al menos 6 caracteres'],
+  //   select: false, // No incluir la contraseña por defecto en las consultas
+  // },
   role: {
     type: String,
     // --- MODIFICACIÓN: Añadir STAFF ---
@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
   location: { // <--- MODIFICADO
     departmentCode: { // Renombrado y cambiado a Number
         type: Number,
-        required: [true, 'El código de departamento es requerido'],
+        //required: [true, 'El código de departamento es requerido'],
         index: true // Indexar si buscas usuarios por depto
     },
     provinceCode: { // Renombrado y cambiado a Number
@@ -99,33 +99,44 @@ const userSchema = new mongoose.Schema({
     required: false,
     // Puedes añadir validación de formato de teléfono si es necesario
     // match: [/^\+?[0-9\s\-()]+$/, 'Número de teléfono inválido'],
+  },
+  facebookId: {
+    type: String,
+    unique: true, // ID de FB debe ser único
+    sparse: true, // Permitir nulls si el usuario no usa FB login
+    index: true,
+  },
+   // Flag para saber si el perfil está completo
+   isProfileComplete: {
+    type: Boolean,
+    default: false // Marcar como incompleto hasta que llene los datos extra
   }
 }, {
   timestamps: true, // Añade createdAt y updatedAt automáticamente
 });
 
-// Middleware Pre-save para hashear la contraseña antes de guardar
-userSchema.pre('save', async function (next) {
-  // Solo hashear la contraseña si ha sido modificada (o es nueva)
-  if (!this.isModified('password')) {
-    return next();
-  }
+// // Middleware Pre-save para hashear la contraseña antes de guardar
+// userSchema.pre('save', async function (next) {
+//   // Solo hashear la contraseña si ha sido modificada (o es nueva)
+//   if (!this.isModified('password')) {
+//     return next();
+//   }
 
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
+//   try {
+//     const salt = await bcrypt.genSalt(10);
+//     this.password = await bcrypt.hash(this.password, salt);
+//     next();
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
-// Método para comparar contraseña ingresada con la hasheada
-userSchema.methods.matchPassword = async function (enteredPassword) {
-  // 'this.password' no estará disponible si 'select: false' está activo,
-  // necesitamos pedirlo explícitamente en la consulta de login.
-  return await bcrypt.compare(enteredPassword, this.password);
-};
+// // Método para comparar contraseña ingresada con la hasheada
+// userSchema.methods.matchPassword = async function (enteredPassword) {
+//   // 'this.password' no estará disponible si 'select: false' está activo,
+//   // necesitamos pedirlo explícitamente en la consulta de login.
+//   return await bcrypt.compare(enteredPassword, this.password);
+// };
 
 
 const User = mongoose.model('User', userSchema);

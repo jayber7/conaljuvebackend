@@ -1,7 +1,18 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const session = require('express-session'); // Importar express-session
+const passport = require('passport');      // Importar passport
+const cookieParser = require('cookie-parser'); // Importar cookie-parser
 const connectDB = require('./config/db'); // Importar conexión DB
+require('./config/passportConfig'); // <--- IMPORTANTE: Ejecuta la configuración de Passport
+//--- Rutas (Importar y usar cuando estén listas) ---
+const authRoutes = require('./routes/authRoutes');
+const newsRoutes = require('./routes/newsRoutes');
+const commentRoutes = require('./routes/commentRoutes');
+const userRoutes = require('./routes/userRoutes'); // Necesitará nueva ruta para completar perfil
+const locationRoutes = require('./routes/locationRoutes');
+
 
 // Cargar variables de entorno
 dotenv.config();
@@ -14,16 +25,29 @@ const swaggerSpec = require('./config/swaggerConfig'); //
 const app = express();
 
 // Middlewares esenciales
-app.use(cors()); // Habilitar CORS (configurar orígenes específicos en producción)
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Permitir origen del frontend
+  credentials: true // IMPORTANTE para cookies de sesión entre dominios/puertos
+})); // Habilitar CORS (configurar orígenes específicos en producción)
 app.use(express.json()); // Para parsear JSON bodies
 app.use(express.urlencoded({ extended: true })); // Para parsear form-data
+app.use(cookieParser()); // Usar cookie-parser ANTES de session
 
-//--- Rutas (Importar y usar cuando estén listas) ---
-const authRoutes = require('./routes/authRoutes');
-const newsRoutes = require('./routes/newsRoutes');
-const commentRoutes = require('./routes/commentRoutes');
-const userRoutes = require('./routes/userRoutes');
-const locationRoutes = require('./routes/locationRoutes');
+
+// --- Configuración de Sesión ---
+app.use(session({
+  secret: process.env.SESSION_SECRET, // Secreto para firmar la cookie de sesión
+  resave: false, // No volver a guardar si no hay cambios
+  saveUninitialized: false, // No guardar sesiones vacías
+  // Opciones adicionales (ej. store para producción, cookie settings)
+  // cookie: { secure: process.env.NODE_ENV === 'production', maxAge: ... } // secure: true en producción (HTTPS)
+}));
+// --- FIN Configuración Sesión ---
+
+// --- Inicializar Passport y Sesión de Passport ---
+app.use(passport.initialize()); // Inicia Passport
+app.use(passport.session());    // Permite sesiones persistentes de login
+// --- FIN Passport ---
 
 // --- Ruta para la Documentación Swagger ---
 // Es bueno ponerla antes de las rutas de la API principal

@@ -155,10 +155,68 @@ const updateUserRole = asyncHandler(async (req, res, next) => {
         }
     });
 });
+// @desc    Completar o actualizar perfil del usuario logueado
+// @route   PUT /api/users/me/profile
+// @access  Private
+const completeUserProfile = asyncHandler(async (req, res, next) => {
+    // Obtener ID del usuario logueado (desde sesión de Passport o token JWT via 'protect')
+    const userId = req.user._id;
 
+    // Obtener los datos permitidos del body
+    const {
+        name, location, birthDate, gender, idCard, idCardExtension, phoneNumber
+    } = req.body;
+
+    // Construir objeto de actualización solo con los campos proporcionados
+    const updates = {};
+    if (name) updates.name = name;
+    // Formatear location (asumiendo que viene con códigos)
+    if (location) {
+        updates.location = {
+             departmentCode: location.departmentCode ? Number(location.departmentCode) : undefined,
+             provinceCode: location.provinceCode ? Number(location.provinceCode) : undefined,
+             municipalityCode: location.municipalityCode ? Number(location.municipalityCode) : undefined,
+             zone: location.zone || undefined,
+        };
+         Object.keys(updates.location).forEach(key => updates.location[key] === undefined && delete updates.location[key]);
+         if (Object.keys(updates.location).length === 0) delete updates.location;
+    }
+    if (birthDate) updates.birthDate = new Date(birthDate); // Asegurar que sea Date
+    const genderValue = typeof gender === 'boolean' ? gender : (gender === 'true' ? true : (gender === 'false' ? false : undefined));
+    if (genderValue !== undefined) updates.gender = genderValue;
+    if (idCard !== undefined) updates.idCard = idCard; // Permitir string vacío si se quiere borrar?
+    if (idCardExtension !== undefined) updates.idCardExtension = idCardExtension.toUpperCase().trim();
+    if (phoneNumber !== undefined) updates.phoneNumber = phoneNumber;
+
+    // Marcar perfil como completo si se actualizan campos clave (ej. ubicación)
+    if (updates.location?.departmentCode) { // Si al menos el depto se completó
+        updates.isProfileComplete = true;
+    }
+
+    // Realizar la actualización
+    const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        updates, // Aplicar solo los campos que vienen
+        { new: true, runValidators: true } // Devolver actualizado, correr validaciones
+    ).select('-password'); // Excluir contraseña
+
+    if (!updatedUser) {
+        return next(new AppError('Usuario no encontrado', 404));
+    }
+
+    res.status(200).json({
+        status: 'success',
+        message: 'Perfil actualizado exitosamente.',
+        data: {
+            user: updatedUser // Devolver perfil completo y actualizado
+        }
+    });
+});
 
 module.exports = {
-    updateUserLocation,
+    //updateUserLocation,
     getUsers, // Exportar nueva función
     updateUserRole,
+    completeUserProfile, // Exportar nueva función
+
 };
