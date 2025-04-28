@@ -11,7 +11,7 @@ const axios = require('axios'); // Para llamar a APIs externas (geocodificación
 // @access  Public
 const getDepartments = asyncHandler(async (req, res, next) => {
     // Consulta todos los departamentos, ordena por nombre
-    const departments = await Department.find().sort({ name: 1 }).lean(); // .lean() para objetos JS planos
+    const departments = await Department.find().sort({ name: 1 }).select('code name abbreviation').lean(); // .lean() para objetos JS planos
     res.status(200).json({ status: 'success', data: { departments }});
 });
 

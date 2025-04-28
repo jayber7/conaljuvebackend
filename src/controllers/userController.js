@@ -185,7 +185,7 @@ const completeUserProfile = asyncHandler(async (req, res, next) => {
     const genderValue = typeof gender === 'boolean' ? gender : (gender === 'true' ? true : (gender === 'false' ? false : undefined));
     if (genderValue !== undefined) updates.gender = genderValue;
     if (idCard !== undefined) updates.idCard = idCard; // Permitir string vacío si se quiere borrar?
-    if (idCardExtension !== undefined) updates.idCardExtension = idCardExtension.toUpperCase().trim();
+    if (idCardExtension !== undefined) updates.idCardExtension = idCardExtension;
     if (phoneNumber !== undefined) updates.phoneNumber = phoneNumber;
 
     // Marcar perfil como completo si se actualizan campos clave (ej. ubicación)

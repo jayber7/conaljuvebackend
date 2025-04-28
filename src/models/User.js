@@ -58,15 +58,12 @@ const userSchema = new mongoose.Schema({
         trim: true,
         required: false
     },
-    idCardExtension: { // Extensión del Carnet (LP, CB, SC, etc.)
-      type: String,
-      uppercase: true, // Guardar en mayúsculas
-      trim: true,
-      required: false, // Hacer obligatorio solo si idCard también lo es?
-      // Podrías usar un enum si quieres limitar a los códigos de departamento válidos
-      enum: ['LP', 'CB', 'SC', 'OR', 'PO', 'CH', 'TJ', 'BE', 'PA', ''], // Permitir vacío si es opcional
-      index: true, // Indexar si buscas por extensión
-    },
+    idCardExtension: {
+      type: Number, // <-- CAMBIAR A NUMBER
+      required: false,
+      index: true,
+      // enum: [1, 2, 3, 4, 5, 6, 7, 8, 9] // Opcional: enum con números
+  },
     // coordinates: { lat: Number, lng: Number } // Mantenidas si las necesitas
   },
   isActive: {
@@ -104,6 +101,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true, // ID de FB debe ser único
     sparse: true, // Permitir nulls si el usuario no usa FB login
+    index: true,
+  },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true, // Permitir nulls si no usan Google login
     index: true,
   },
    // Flag para saber si el perfil está completo

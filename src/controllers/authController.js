@@ -3,6 +3,9 @@ const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/appError.js');
+const { OAuth2Client } = require('google-auth-library');
+
+
 
 // @desc    Registrar un nuevo usuario
 // @route   POST /api/auth/register
@@ -35,7 +38,8 @@ const registerUser = asyncHandler(async (req, res, next) => {
     gender: typeof gender === 'boolean' ? gender : undefined,
     profilePictureUrl: profilePictureUrl, // Usar URL si viene
     idCard: idCard || undefined,
-    idCardExtension: idCardExtension ? idCardExtension.toUpperCase().trim() : undefined, // <-- Guardar si existe, en mayúsculas
+    //idCardExtension: idCardExtension ? idCardExtension.toUpperCase().trim() : undefined, // <-- Guardar si existe, en mayúsculas
+    idCardExtension: idCardExtension ? parseInt(idCardExtension, 10) : undefined,
     phoneNumber: phoneNumber || undefined,
     // --- FIN MODIFICACIÓN ---
   };
@@ -95,6 +99,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
       gender: user.gender, 
       profilePictureUrl:user.profilePictureUrl, 
       idCard: user.idCard, 
+      idCardExtension: user.idCardExtension,
       phoneNumber: user.phoneNumber, 
       token: token,
     });
@@ -121,6 +126,7 @@ const getMe = asyncHandler(async (req, res, next) => {
       gender: user.gender, 
       profilePictureUrl:user.profilePictureUrl, 
       idCard: user.idCard, 
+      idCardExtension: user.idCardExtension,
       phoneNumber: user.phoneNumber,       
       createdAt: user.createdAt
     });
@@ -130,8 +136,120 @@ const getMe = asyncHandler(async (req, res, next) => {
 
 });
 
+// @desc    Verificar código de autorización de Google y autenticar/registrar usuario
+// @route   POST /api/auth/google/verify-code
+// @access  Public
+const verifyGoogleCode = asyncHandler(async (req, res, next) => {
+  const { code } = req.body;
+  console.log("😆")
+  console.log(code)
+  if (!code) {
+      return next(new AppError('No se proporcionó código de autorización de Google', 400));
+  }
+
+  try {
+      // 1. Intercambiar código por tokens con Google
+      // Necesitas la redirect_uri que usó el frontend (generalmente se infiere o puede ser 'postmessage')
+      // Revisa la documentación de @react-oauth/google sobre el redirect_uri para el code flow
+      // Si usas librerías frontend, a menudo el intercambio lo hace la librería
+      // y te da directamente el id_token o access_token.
+      // --- ASUMIENDO QUE @react-oauth/google TE DA id_token o access_token ---
+      // ---> Necesitamos AJUSTAR el frontend para enviar el token, no el code <---
+
+      // --- REVISIÓN: @react-oauth/google con useGoogleLogin y flow: 'auth-code'
+      // DEVUELVE UN *Authorization Code*. El backend DEBE intercambiarlo.
+      
+
+      const redirectUri = 'postmessage'; // O la URI registrada si no usas 'postmessage'
+
+      const oauth2Client1 = new OAuth2Client(
+        
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        redirectUri,
+       
+      );
+    
+      
+        // --- DEBUG LOGS ---
+    console.log("😡DEBUG: GOOGLE_CLIENT_ID =", process.env.GOOGLE_CLIENT_ID);
+    console.log("DEBUG: GOOGLE_CLIENT_SECRET =", process.env.GOOGLE_CLIENT_SECRET ? '***SECRET_DEFINIDO***' : '!!!SECRET_NO_DEFINIDO!!!'); // No imprimas el secreto real
+    console.log(`Intentando getToken con code: ${code} y redirect_uri: ${redirectUri}`);
+    // --- FIN DEBUG LOGS ---
+
+       const { tokens } = await oauth2Client1.getToken({
+           code
+       });
+       console.log("Tokens de Google obtenidos:", tokens);
+       oauth2Client1.setCredentials(tokens);
+       if (!tokens.id_token) {
+           return next(new AppError('No se pudo obtener el ID Token de Google', 401));
+       }
+
+
+      // 2. Verificar el ID Token para obtener datos del usuario
+       console.log("Verificando ID Token de Google...");
+       const ticket = await oauth2Client1.verifyIdToken({
+           idToken: tokens.id_token,
+           audience: process.env.GOOGLE_CLIENT_ID,
+       });
+       const payload = ticket.getPayload();
+       console.log("Payload del ID Token:", payload);
+
+       if (!payload || !payload.sub || !payload.email || !payload.email_verified) {
+            return next(new AppError('Token de ID de Google inválido o email no verificado', 401));
+       }
+
+       const googleId = payload.sub;
+       const email = payload.email;
+       const name = payload.name;
+       const profilePictureUrl = payload.picture;
+
+      // 3. Buscar o Crear Usuario en tu DB (lógica similar a Passport Strategy)
+      let user = await User.findOne({ googleId: googleId });
+      if (!user) {
+           // Intentar buscar por email para vincular
+           user = await User.findOne({ email: email });
+           if (user) {
+               console.log('Vinculando Google ID a usuario existente:', user.email);
+               user.googleId = googleId;
+               if (!user.profilePictureUrl && profilePictureUrl) user.profilePictureUrl = profilePictureUrl;
+               await user.save();
+           } else {
+               // Crear nuevo usuario
+               console.log('Creando nuevo usuario desde Google (verify-code):', email);
+               user = await User.create({
+                   googleId, email, name, profilePictureUrl,
+                   // isProfileComplete será false por defecto
+               });
+           }
+      } else {
+           console.log('Usuario encontrado por Google ID (verify-code):', user.email);
+      }
+
+      // 4. Generar TU propio token JWT
+      const token = generateToken(user._id);
+
+      // 5. Devolver respuesta al frontend
+       res.status(200).json({
+           message: 'Autenticación con Google exitosa',
+           user: { // Devolver datos necesarios
+               _id: user._id, name: user.name, email: user.email,
+               role: user.role, profilePictureUrl: user.profilePictureUrl,
+               isProfileComplete: user.isProfileComplete,
+           },
+           token: token
+       });
+
+  } catch (error) {
+      console.error('Error verificando código/token de Google:', error);
+      return next(new AppError('Falló la autenticación con Google', 401));
+  }
+});
 module.exports = {
-  registerUser,
-  loginUser,
+  //registerUser,
+  //loginUser,
+  //completeUserProfile,
+  verifyGoogleCode, // Exportar nuevo controlador
   getMe,
 };

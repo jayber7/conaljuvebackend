@@ -1,7 +1,7 @@
 // src/routes/userRoutes.js
 const express = require('express');
 const { body, param, query } = require('express-validator');
-const { updateUserLocation,getUsers,updateUserRole, completeUserProfile } = require('../controllers/userController');
+const { getUsers,updateUserRole, completeUserProfile } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
 const { admin } = require('../middleware/adminMiddleware'); // Necesario para proteger rutas de admin
 const { handleValidationErrors } = require('../middleware/validationMiddleware');
@@ -19,7 +19,7 @@ const completeProfileValidation = [
     body('birthDate', 'Fecha de nacimiento inválida (YYYY-MM-DD)').optional({ checkFalsy: true }).isISO8601().toDate(),
     body('gender', 'Género inválido').optional().isBoolean().withMessage('Debe ser true o false'),
     body('idCard', 'Número de carnet inválido').optional({ checkFalsy: true }).isString().trim().escape(),
-    body('idCardExtension', 'Extensión de CI inválida').optional({ checkFalsy: true }).isString().trim().toUpperCase().isIn(['LP', 'CB', 'SC', 'OR', 'PO', 'CH', 'TJ', 'BE', 'PA']),
+    body('idCardExtension', 'Extensión de CI inválida (código numérico)').optional({ checkFalsy: true }).isInt({ min: 1, max: 9 }) .toInt(),
     body('phoneNumber', 'Número de celular inválido').optional({ checkFalsy: true }).isString().trim().escape(),
 ];
 // --- FIN VALIDACIÓN ---

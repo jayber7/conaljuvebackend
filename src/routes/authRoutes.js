@@ -1,7 +1,7 @@
 // src/routes/authRoutes.js
 const express = require('express');
 const { body } = require('express-validator');
-const { registerUser, loginUser, getMe } = require('../controllers/authController');
+const { getMe, verifyGoogleCode } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 const { completeUserProfile } = require('../controllers/userController');
 const { handleValidationErrors } = require('../middleware/validationMiddleware');
@@ -10,6 +10,7 @@ const validDepartmentCodes = ['LP', 'CB', 'SC', 'OR', 'PO', 'CH', 'TJ', 'BE', 'P
 const passport = require('passport');
 const jwt = require('jsonwebtoken'); // Para generar token JWT si quieres devolverlo además de la sesión
 const generateToken = require('../utils/generateToken'); // Tu utilidad JWT
+
 
 
 const router = express.Router();
@@ -39,12 +40,10 @@ const registerValidation = [
     body('idCard', 'Número de carnet inválido')
         .optional({ checkFalsy: true }) // Hacerlo opcional
         .isString().trim().escape(), // Ajusta validación si tiene formato específico
-    body('idCardExtension', 'Extensión de CI inválida')
-        .optional({ checkFalsy: true }) // Hacer opcional si no siempre se requiere
-        .isString()
-        .trim()
-        .toUpperCase() // Convertir a mayúsculas antes de validar
-        .isIn(validDepartmentCodes).withMessage(`La extensión debe ser uno de los códigos de departamento: ${validDepartmentCodes.join(', ')}`),
+    body('idCardExtension', 'Extensión de CI inválida (código numérico)')
+        .optional({ checkFalsy: true })
+        .isInt({ min: 1, max: 9 }) // Asumiendo códigos 1-9
+        .toInt(), // Convertir a número entero
     body('phoneNumber', 'Número de celular inválido')
         .optional({ checkFalsy: true })
         .isString().trim().escape() // Validación simple, puede mejorarse
@@ -250,7 +249,8 @@ router.get('/facebook/callback',
  *               $ref: '#/components/schemas/ErrorResponse'
  */
 
-router.post('/register', upload.single('profilePicture'), registerValidation, handleValidationErrors, registerUser);
+//router.post('/register', upload.single('profilePicture'), registerValidation, handleValidationErrors, registerUser);
+router.post('/google/verify-code', verifyGoogleCode); // <-- ¿Está verifyGoogleCode importado correctamente?
 
 
 /**
@@ -289,13 +289,60 @@ router.post('/register', upload.single('profilePicture'), registerValidation, ha
  *         description: Error interno del servidor.
  */
 const loginValidation = [ /* ... tus reglas de validación ... */ ];
-router.post('/login', loginValidation, handleValidationErrors, loginUser);
+//router.post('/login', loginValidation, handleValidationErrors, loginUser);
 const ensureAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) { // Función de Passport
         return next();
     }
     res.status(401).json({ message: 'No autenticado (sesión)' });
 };
+// Ruta inicial: Redirige al usuario a Google
+// scope: pide información básica del perfil y email
+router.get('/google', passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    session: false // No usar sesión de passport
+}));
+
+// Ruta de Callback: Google redirige aquí
+router.get('/google/callback',
+    passport.authenticate('google', {
+        failureRedirect: `${process.env.FRONTEND_URL}/?login_error=google_failed`,
+        session: false // No usar sesión
+    }),
+    // Si authenticate tiene éxito, req.user está disponible
+    (req, res) => {
+        if (!req.user) {
+             // ... devolver script de error al popup ...
+             const errorScript = `<script> /* ... window.opener.postMessage({ type: 'auth-error', ...}) ... */ </script>`;
+             return res.status(500).send(errorScript);
+        }
+        console.log('Usuario autenticado por Google (sin sesión):', req.user.email);
+
+        // Generar JWT y datos para frontend
+        const token = generateToken(req.user._id);
+        const userDataForFrontend = {
+            _id: req.user._id,
+            name: req.user.name,
+            email: req.user.email,
+            role: req.user.role,
+            profilePictureUrl: req.user.profilePictureUrl,
+            isProfileComplete: req.user.isProfileComplete,
+        };
+
+        // Devolver Script HTML al popup
+        const responseScript = `
+            <script>
+                try {
+                    const payload = ${JSON.stringify({ user: userDataForFrontend, token })};
+                    window.opener.postMessage({ type: 'auth-success', payload: payload }, '${process.env.FRONTEND_URL}');
+                } catch (e) { /* ... */ }
+                finally { window.close(); }
+            </script>
+        `;
+        res.status(200).send(responseScript);
+    }
+);
+
 /**
  * @swagger
  * /auth/me:
@@ -359,4 +406,6 @@ router.post('/logout', (req, res) => {
     //     });
     // });
 });
+// --- NUEVA RUTA PARA VERIFICAR CÓDIGO DESDE FRONTEND ---
+router.post('/google/verify-code', verifyGoogleCode);
 module.exports = router;
