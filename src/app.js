@@ -12,6 +12,7 @@ const newsRoutes = require('./routes/newsRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const userRoutes = require('./routes/userRoutes'); // Necesitará nueva ruta para completar perfil
 const locationRoutes = require('./routes/locationRoutes');
+const memberRoutes = require('./routes/memberRoutes'); // Importar nuevas rutas
 
 
 // Cargar variables de entorno
@@ -63,6 +64,7 @@ app.use('/api/news', newsRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/users', userRoutes); // Ejemplo
 app.use('/api/locations', locationRoutes); // Ejemplo
+app.use('/api/members', memberRoutes); // <-- AÑADIR RUTAS DE MIEMBROS
 
 // --- Middleware de Manejo de Errores (Importar y usar al final) ---
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');

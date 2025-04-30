@@ -155,6 +155,70 @@ const updateUserRole = asyncHandler(async (req, res, next) => {
         }
     });
 });
+
+// @desc    Vincular registro de miembro a usuario logueado
+// @route   PUT /api/users/me/link-member
+// @access  Private (Usuario logueado)
+const linkMemberRegistration = asyncHandler(async (req, res, next) => {
+    const { registrationCode } = req.body;
+    const userId = req.user._id; // Usuario logueado desde 'protect'
+
+    if (!registrationCode) {
+        return next(new AppError('Se requiere el código de registro del miembro.', 400));
+    }
+
+    // 1. Buscar el registro de miembro por código
+    const memberRecord = await Member.findOne({ registrationCode: registrationCode.toUpperCase() });
+
+    if (!memberRecord) {
+        return next(new AppError(`El código de registro "${registrationCode}" no fue encontrado.`, 404));
+    }
+
+    // 2. Verificar estado del miembro (solo vincular si está VERIFIED)
+    if (memberRecord.status !== 'VERIFIED') {
+         return next(new AppError(`El registro ${registrationCode} aún no ha sido verificado o está inactivo/rechazado.`, 403));
+    }
+
+    // 3. Verificar si el registro ya está vinculado a OTRO usuario
+    if (memberRecord.linkedUserId && memberRecord.linkedUserId.toString() !== userId.toString()) {
+        return next(new AppError(`Este registro de miembro ya está vinculado a otra cuenta de usuario.`, 409)); // 409 Conflict
+    }
+
+    // 4. Verificar si el usuario actual ya está vinculado a OTRO registro
+    if (req.user.memberRegistrationCode && req.user.memberRegistrationCode !== registrationCode.toUpperCase()) {
+         return next(new AppError(`Tu cuenta ya está vinculada al registro ${req.user.memberRegistrationCode}.`, 409));
+    }
+
+     // 5. Si ya está vinculado a ESTE usuario, no hacer nada extra
+     if (memberRecord.linkedUserId && memberRecord.linkedUserId.toString() === userId.toString()) {
+         return res.status(200).json({ status: 'success', message: 'Tu cuenta ya está vinculada a este registro.', data: { user: req.user } });
+     }
+
+    // 6. Realizar la vinculación bidireccional
+    // Actualizar User
+    req.user.memberRegistrationCode = memberRecord.registrationCode;
+    await req.user.save({ validateBeforeSave: false }); // Guardar usuario (saltar validaciones si es necesario)
+
+    // Actualizar MemberRegistry
+    memberRecord.linkedUserId = userId;
+    await memberRecord.save();
+
+    console.log(`Usuario ${req.user.email} vinculado exitosamente al registro ${memberRecord.registrationCode}`);
+
+    // Devolver el usuario actualizado (sin contraseña)
+     const updatedUserResponse = req.user.toObject();
+     delete updatedUserResponse.password;
+
+    res.status(200).json({
+        status: 'success',
+        message: `Registro ${memberRecord.registrationCode} vinculado exitosamente a tu cuenta.`,
+        data: {
+            user: updatedUserResponse
+        }
+    });
+});
+
+
 // @desc    Completar o actualizar perfil del usuario logueado
 // @route   PUT /api/users/me/profile
 // @access  Private
@@ -218,5 +282,5 @@ module.exports = {
     getUsers, // Exportar nueva función
     updateUserRole,
     completeUserProfile, // Exportar nueva función
-
+    linkMemberRegistration
 };

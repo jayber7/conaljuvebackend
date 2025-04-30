@@ -1,13 +1,17 @@
 // src/routes/userRoutes.js
 const express = require('express');
 const { body, param, query } = require('express-validator');
-const { getUsers,updateUserRole, completeUserProfile } = require('../controllers/userController');
+const { getUsers,updateUserRole, completeUserProfile, linkMemberRegistration} = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
 const { admin } = require('../middleware/adminMiddleware'); // Necesario para proteger rutas de admin
 const { handleValidationErrors } = require('../middleware/validationMiddleware');
 
 const router = express.Router();
 
+// --- VALIDACIÓN PARA VINCULAR MIEMBRO ---
+const linkMemberValidation = [
+    body('registrationCode', 'Código de registro requerido').not().isEmpty().trim().escape().toUpperCase(),
+];
 // --- VALIDACIÓN PARA COMPLETAR PERFIL ---
 // Similar a registerValidation pero sin password/confirmPassword/username/email
 const completeProfileValidation = [
@@ -82,6 +86,15 @@ router.put(
     },
     handleValidationErrors,
     completeUserProfile // Nuevo controlador
+);
+
+// --- RUTA PARA VINCULAR REGISTRO DE MIEMBRO ---
+router.put(
+    '/me/link-member',
+    protect, // Requiere estar logueado
+    linkMemberValidation,
+    handleValidationErrors,
+    linkMemberRegistration // Llama al controlador
 );
 // PUT /api/users/:userId/role - Actualizar rol de un usuario específico (Solo Admin)
 router.put(
