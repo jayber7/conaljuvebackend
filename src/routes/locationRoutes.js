@@ -5,7 +5,8 @@ const {
     getDepartments,
     getProvinces,
     getMunicipalities,
-    getLocationSuggestions
+    getLocationSuggestions,
+    getCouncilRoles 
 } = require('../controllers/locationController');
 const { handleValidationErrors } = require('../middleware/validationMiddleware'); // Reutilizar handler
 
@@ -28,5 +29,6 @@ router.get('/departments', getDepartments);
 router.get('/provinces', provinceQueryValidation, handleValidationErrors, getProvinces);
 router.get('/municipalities', municipalityQueryValidation, handleValidationErrors, getMunicipalities);
 router.get('/suggestions', suggestionQueryValidation, handleValidationErrors, getLocationSuggestions);
+router.get('/council-roles', getCouncilRoles);
 
 module.exports = router;

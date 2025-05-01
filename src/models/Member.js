@@ -12,7 +12,7 @@ const memberSchema = new mongoose.Schema({
   idCard: { type: String, required: true, trim: true, unique: true }, // Hacer CI/Extensión requeridos aquí
   idCardExtension: { type: Number, required: true, index: true, /* enum: [...] */ },
   birthDate: { type: Date, required: false },
-  gender: { type: Boolean, required: false },
+  sex: { type: Boolean, required: false },
   phoneNumber: { type: String, required: false, trim: true },
   // Ubicación Detallada (Requerida)
   location: {
@@ -22,7 +22,7 @@ const memberSchema = new mongoose.Schema({
     zone: { type: String, required: true, trim: true }, // Hacer Zona requerida aquí
   },
   neighborhoodCouncilName: { type: String, required: true, trim: true }, // Nombre Junta Vecinal
-  memberRoleInCouncil: { type: String, required: true, trim: true }, // Cargo en la Junta
+  memberRoleInCouncilCode: {  type: Number, required: true, index: true }, // Cargo en la Junta
   registrationDate: { type: Date, default: Date.now },
   // Estado de este registro (independiente del login del usuario)
   status: {

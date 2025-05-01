@@ -31,7 +31,7 @@ const registerValidation = [
         .optional({ checkFalsy: true }) // Hacerla opcional (elimina si es req.)
         .isISO8601() // Espera formato YYYY-MM-DD o completo ISO
         .toDate(), // Convertir a objeto Date
-    body('gender', 'Género inválido')
+    body('sex', 'Sexo inválido')
         .optional()
         .isBoolean().withMessage('Debe ser true o false'), // Validar que sea booleano si se envía
     body('profilePictureUrl', 'URL de foto inválida')

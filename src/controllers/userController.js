@@ -228,7 +228,7 @@ const completeUserProfile = asyncHandler(async (req, res, next) => {
 
     // Obtener los datos permitidos del body
     const {
-        name, location, birthDate, gender, idCard, idCardExtension, phoneNumber
+        name, location, birthDate, sex, idCard, idCardExtension, phoneNumber
     } = req.body;
 
     // Construir objeto de actualización solo con los campos proporcionados
@@ -246,8 +246,8 @@ const completeUserProfile = asyncHandler(async (req, res, next) => {
          if (Object.keys(updates.location).length === 0) delete updates.location;
     }
     if (birthDate) updates.birthDate = new Date(birthDate); // Asegurar que sea Date
-    const genderValue = typeof gender === 'boolean' ? gender : (gender === 'true' ? true : (gender === 'false' ? false : undefined));
-    if (genderValue !== undefined) updates.gender = genderValue;
+    const sexValue = typeof sex === 'boolean' ? sex : (sex === 'true' ? true : (sex === 'false' ? false : undefined));
+    if (sexValue !== undefined) updates.sex = sexValue;
     if (idCard !== undefined) updates.idCard = idCard; // Permitir string vacío si se quiere borrar?
     if (idCardExtension !== undefined) updates.idCardExtension = idCardExtension;
     if (phoneNumber !== undefined) updates.phoneNumber = phoneNumber;

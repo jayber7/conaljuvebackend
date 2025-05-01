@@ -11,8 +11,8 @@ const APIFeatures = require('../utils/apiFeatures');
 const registerNewMember = asyncHandler(async (req, res, next) => {
     // Campos de texto vienen en req.body
     const {
-        fullName, idCard, idCardExtension, birthDate, gender, phoneNumber,
-        location, neighborhoodCouncilName, memberRoleInCouncil
+        fullName, idCard, idCardExtension, birthDate, sex, phoneNumber,
+        location, neighborhoodCouncilName, memberRoleInCouncilCode 
     } = req.body;
 
     // Foto viene en req.file (si se usa upload.single('memberPhoto'))
@@ -36,7 +36,7 @@ const registerNewMember = asyncHandler(async (req, res, next) => {
         fullName, idCard,
         idCardExtension: idCardExtension,
         birthDate: birthDate ? new Date(birthDate) : undefined,
-        gender: typeof gender === 'boolean' ? gender : (gender === 'true' ? true : (gender === 'false' ? false : undefined)),
+        sex: typeof sex === 'boolean' ? sex : (sex === 'true' ? true : (sex === 'false' ? false : undefined)),
         phoneNumber: phoneNumber || undefined,
         location: {
             departmentCode: Number(location.departmentCode),
@@ -45,7 +45,7 @@ const registerNewMember = asyncHandler(async (req, res, next) => {
             zone: location.zone.trim(),
         },
         neighborhoodCouncilName,
-        memberRoleInCouncil,
+        memberRoleInCouncilCode: Number(memberRoleInCouncilCode), // <-- Guardar código numérico
         photoUrl: photoUrl,
         status: 'PENDING', // Siempre empieza como pendiente
     };
@@ -66,7 +66,9 @@ const registerNewMember = asyncHandler(async (req, res, next) => {
             fullName: newMember.fullName,
             idCard: newMember.idCard,
             idCardExtension: newMember.idCardExtension,
-            // ... otros datos relevantes para el comprobante ...
+            memberRoleInCouncilCode: newMember.memberRoleInCouncilCode, // Enviar código de cargo
+            location: newMember.location, // Enviar códigos de ubicación
+
         }
     });
 });

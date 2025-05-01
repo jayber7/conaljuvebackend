@@ -11,7 +11,7 @@ const { OAuth2Client } = require('google-auth-library');
 // @route   POST /api/auth/register
 // @access  Public
 const registerUser = asyncHandler(async (req, res, next) => {
-  const { name, username, email, password, location, birthDate, gender, idCard, idCardExtension, phoneNumber } = req.body;
+  const { name, username, email, password, location, birthDate, sex, idCard, idCardExtension, phoneNumber } = req.body;
 
   // La información del archivo subido (si existe) está en req.file
   // multer-storage-cloudinary añade la propiedad 'path' con la URL segura de Cloudinary
@@ -35,7 +35,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
     // --- MODIFICACIÓN: Añadir nuevos campos (con validación básica) ---
     birthDate: birthDate ? new Date(birthDate) : undefined, // Convertir a Date si viene
     // Asegurarse que gender sea booleano o undefined
-    gender: typeof gender === 'boolean' ? gender : undefined,
+    sex: typeof sex === 'boolean' ? sex : undefined,
     profilePictureUrl: profilePictureUrl, // Usar URL si viene
     idCard: idCard || undefined,
     //idCardExtension: idCardExtension ? idCardExtension.toUpperCase().trim() : undefined, // <-- Guardar si existe, en mayúsculas
@@ -96,7 +96,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
       role: user.role,
       location: user.location,
       birthDate: user.birthDate, 
-      gender: user.gender, 
+      sex: user.sex, 
       profilePictureUrl:user.profilePictureUrl, 
       idCard: user.idCard, 
       idCardExtension: user.idCardExtension,
@@ -123,7 +123,7 @@ const getMe = asyncHandler(async (req, res, next) => {
       role: user.role,
       location: user.location,
       birthDate: user.birthDate, 
-      gender: user.gender, 
+      sex: user.sex, 
       profilePictureUrl:user.profilePictureUrl, 
       idCard: user.idCard, 
       idCardExtension: user.idCardExtension,

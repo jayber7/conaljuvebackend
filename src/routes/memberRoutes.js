@@ -20,14 +20,14 @@ const memberRegisterValidation = [
     body('idCard', 'Número de CI es requerido').not().isEmpty().trim().escape(),    
     body('idCardExtension', 'Extensión de CI inválida (código numérico)').optional({ checkFalsy: true }).isInt({ min: 1, max: 9 }) .toInt(),
     body('birthDate', 'Fecha de nacimiento inválida').optional({checkFalsy: true}).isISO8601().toDate(),
-    body('gender', 'Género inválido').optional().isBoolean(),
+    body('sex', 'Sexo inválido').optional().isBoolean(),
     body('phoneNumber', 'Teléfono inválido').optional({checkFalsy: true}).isString().trim().escape(),
     body('location.departmentCode', 'Depto. requerido').not().isEmpty().isInt({min: 0}).toInt(),
     body('location.provinceCode', 'Provincia requerida').not().isEmpty().isInt({min: 0}).toInt(),
     body('location.municipalityCode', 'Municipio requerido').not().isEmpty().isInt({min: 0}).toInt(),
     body('location.zone', 'Zona/Barrio requerido').not().isEmpty().trim().escape(),
-    body('neighborhoodCouncilName', 'Nombre de Junta Vecinal requerido').not().isEmpty().trim().escape(),
-    body('memberRoleInCouncil', 'Cargo en Junta Vecinal requerido').not().isEmpty().trim().escape(),
+    body('neighborhoodCouncilName', 'Nombre de Junta Vecinal requerido').not().isEmpty().trim().escape(),    
+    body('memberRoleInCouncilCode', 'Cargo en Junta Vecinal inválido').not().isEmpty().withMessage('El Cargo es requerido').isInt({ min: 1 }).withMessage('Seleccione un cargo válido').toInt(),
 ];
 
 // Validación para actualizar estado

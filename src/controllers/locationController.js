@@ -4,6 +4,8 @@ const AppError = require('../utils/appError.js'); // Asegúrate que la ruta es c
 const Department = require('../models/Department'); // Importar modelos
 const Province = require('../models/Province');
 const Municipality = require('../models/Municipality');
+const CouncilRole = require('../models/CouncilRole'); // Importar modelo
+
 const axios = require('axios'); // Para llamar a APIs externas (geocodificación)
 
 // @desc    Obtener lista de departamentos
@@ -117,6 +119,13 @@ const getLocationSuggestions = asyncHandler(async (req, res, next) => {
          return next(new AppError('Error al procesar la solicitud de sugerencia de ubicación.', 500));
     }
 });
+// @desc    Obtener lista de cargos de junta vecinal
+// @route   GET /api/locations/council-roles (o /api/council-roles/)
+// @access  Public
+const getCouncilRoles = asyncHandler(async (req, res, next) => {
+    const roles = await CouncilRole.find().sort({ order: 1, name: 1 }).select('code name').lean(); // Ordenar y seleccionar campos
+    res.status(200).json({ status: 'success', data: { councilRoles: roles } });
+});
 
 
 module.exports = {
@@ -124,4 +133,5 @@ module.exports = {
     getProvinces,
     getMunicipalities,
     getLocationSuggestions,
+    getCouncilRoles,
 };

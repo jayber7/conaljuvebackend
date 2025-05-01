@@ -21,7 +21,7 @@ const completeProfileValidation = [
     body('location.municipalityCode', 'Código Muni. inválido').optional().isInt({ min: 0 }).toInt(),
     body('location.zone').optional().isString().trim().escape(),
     body('birthDate', 'Fecha de nacimiento inválida (YYYY-MM-DD)').optional({ checkFalsy: true }).isISO8601().toDate(),
-    body('gender', 'Género inválido').optional().isBoolean().withMessage('Debe ser true o false'),
+    body('sex', 'Sexo inválido').optional().isBoolean().withMessage('Debe ser true o false'),
     body('idCard', 'Número de carnet inválido').optional({ checkFalsy: true }).isString().trim().escape(),
     body('idCardExtension', 'Extensión de CI inválida (código numérico)').optional({ checkFalsy: true }).isInt({ min: 1, max: 9 }) .toInt(),
     body('phoneNumber', 'Número de celular inválido').optional({ checkFalsy: true }).isString().trim().escape(),
