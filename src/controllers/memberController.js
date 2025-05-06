@@ -26,8 +26,8 @@ const registerNewMember = asyncHandler(async (req, res, next) => {
         return next(new AppError(`El Carnet de Identidad ${idCard} ${idCardExtension} ya está registrado.`, 400));
     }
     // Asegurar que la ubicación tenga los campos requeridos
-    if (!location || !location.departmentCode || !location.provinceCode || !location.municipalityCode || !location.zone) {
-         return next(new AppError('La información completa de ubicación (Departamento, Provincia, Municipio, Zona) es requerida.', 400));
+    if (!location || !location.departmentCode || !location.provinceCode || !location.municipalityCode || !location.zone  || !location.neighborhood  || !location.street) {
+         return next(new AppError('La información completa de ubicación (Departamento, Provincia, Municipio, Zona, Barrio y Calle) es requerida.', 400));
     }
     // --- Fin Validación ---
 
@@ -43,6 +43,8 @@ const registerNewMember = asyncHandler(async (req, res, next) => {
             provinceCode: Number(location.provinceCode),
             municipalityCode: Number(location.municipalityCode),
             zone: location.zone.trim(),
+            neighborhood: location.neighborhood.trim(),
+            street: location.street.trim(),
         },
         neighborhoodCouncilName,
         memberRoleInCouncilCode: Number(memberRoleInCouncilCode), // <-- Guardar código numérico

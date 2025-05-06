@@ -71,34 +71,7 @@ const getUsers = asyncHandler(async (req, res, next) => {
 
     let users = await features.query.lean();
     
-    
-     // --- POBLAR NOMBRES DE DEPARTAMENTO MANUALMENTE ---
-     if (users.length > 0) {
-        // 1. Obtener todos los códigos de departamento únicos de la lista de usuarios
-        const departmentCodes = [...new Set(users.map(user => user.location?.departmentCode).filter(code => code != null))];
-
-        // 2. Buscar los documentos de departamento correspondientes a esos códigos
-        if (departmentCodes.length > 0) {
-            const departmentsFound = await Department.find({ code: { $in: departmentCodes } }).select('code name').lean();
-            // 3. Crear un mapa para búsqueda rápida: { code: name }
-            const departmentMap = new Map(departmentsFound.map(dept => [dept.code, dept.name]));
-
-            // 4. Añadir el departmentName a cada usuario en la lista
-            users = users.map(user => {
-                if (user.location?.departmentCode) {
-                    return {
-                        ...user,
-                        location: {
-                            ...user.location,
-                            departmentName: departmentMap.get(user.location.departmentCode) || null // Añadir nombre
-                        }
-                    };
-                }
-                return user; // Devolver usuario sin cambios si no tiene código de depto
-            });
-        }
-    }
-    // --- FIN POBLAR NOMBRES ---
+   
     // Opcional: Conteo total para paginación frontend
     const totalUsers = await User.countDocuments(new APIFeatures(User.find(), req.query).filter().query.getQuery());
 
@@ -228,35 +201,14 @@ const completeUserProfile = asyncHandler(async (req, res, next) => {
 
     // Obtener los datos permitidos del body
     const {
-        name, location, birthDate, sex, idCard, idCardExtension, phoneNumber
+        name
     } = req.body;
 
     // Construir objeto de actualización solo con los campos proporcionados
     const updates = {};
     if (name) updates.name = name;
     // Formatear location (asumiendo que viene con códigos)
-    if (location) {
-        updates.location = {
-             departmentCode: location.departmentCode ? Number(location.departmentCode) : undefined,
-             provinceCode: location.provinceCode ? Number(location.provinceCode) : undefined,
-             municipalityCode: location.municipalityCode ? Number(location.municipalityCode) : undefined,
-             zone: location.zone || undefined,
-        };
-         Object.keys(updates.location).forEach(key => updates.location[key] === undefined && delete updates.location[key]);
-         if (Object.keys(updates.location).length === 0) delete updates.location;
-    }
-    if (birthDate) updates.birthDate = new Date(birthDate); // Asegurar que sea Date
-    const sexValue = typeof sex === 'boolean' ? sex : (sex === 'true' ? true : (sex === 'false' ? false : undefined));
-    if (sexValue !== undefined) updates.sex = sexValue;
-    if (idCard !== undefined) updates.idCard = idCard; // Permitir string vacío si se quiere borrar?
-    if (idCardExtension !== undefined) updates.idCardExtension = idCardExtension;
-    if (phoneNumber !== undefined) updates.phoneNumber = phoneNumber;
-
-    // Marcar perfil como completo si se actualizan campos clave (ej. ubicación)
-    if (updates.location?.departmentCode) { // Si al menos el depto se completó
-        updates.isProfileComplete = true;
-    }
-
+    
     // Realizar la actualización
     const updatedUser = await User.findByIdAndUpdate(
         userId,

@@ -13,13 +13,15 @@ const memberSchema = new mongoose.Schema({
   idCardExtension: { type: Number, required: true, index: true, /* enum: [...] */ },
   birthDate: { type: Date, required: false },
   sex: { type: Boolean, required: false },
-  phoneNumber: { type: String, required: false, trim: true },
+  phoneNumber: { type: String, required: true, trim: true },
   // Ubicación Detallada (Requerida)
   location: {
     departmentCode: { type: Number, required: true },
     provinceCode: { type: Number, required: true },
     municipalityCode: { type: Number, required: true },
     zone: { type: String, required: true, trim: true }, // Hacer Zona requerida aquí
+    neighborhood:  { type: String, required: true, trim: true },
+    street: { type: String, required: true, trim: true },
   },
   neighborhoodCouncilName: { type: String, required: true, trim: true }, // Nombre Junta Vecinal
   memberRoleInCouncilCode: {  type: Number, required: true, index: true }, // Cargo en la Junta

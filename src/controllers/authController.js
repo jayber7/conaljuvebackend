@@ -11,7 +11,7 @@ const { OAuth2Client } = require('google-auth-library');
 // @route   POST /api/auth/register
 // @access  Public
 const registerUser = asyncHandler(async (req, res, next) => {
-  const { name, username, email, password, location, birthDate, sex, idCard, idCardExtension, phoneNumber } = req.body;
+  const { name, username, email, password  } = req.body;
 
   // La información del archivo subido (si existe) está en req.file
   // multer-storage-cloudinary añade la propiedad 'path' con la URL segura de Cloudinary
@@ -31,17 +31,8 @@ const registerUser = asyncHandler(async (req, res, next) => {
     username,
     email,
     password, // Se hashea en pre-save
-    location, // Asegúrate que 'location' ya venga formateado con códigos numéricos
-    // --- MODIFICACIÓN: Añadir nuevos campos (con validación básica) ---
-    birthDate: birthDate ? new Date(birthDate) : undefined, // Convertir a Date si viene
-    // Asegurarse que gender sea booleano o undefined
-    sex: typeof sex === 'boolean' ? sex : undefined,
     profilePictureUrl: profilePictureUrl, // Usar URL si viene
-    idCard: idCard || undefined,
-    //idCardExtension: idCardExtension ? idCardExtension.toUpperCase().trim() : undefined, // <-- Guardar si existe, en mayúsculas
-    idCardExtension: idCardExtension ? parseInt(idCardExtension, 10) : undefined,
-    phoneNumber: phoneNumber || undefined,
-    // --- FIN MODIFICACIÓN ---
+    
   };
   // Limpiar campos undefined para no guardarlos si son opcionales
   Object.keys(newUserInput).forEach(key => newUserInput[key] === undefined && delete newUserInput[key]);
@@ -58,15 +49,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
     const userResponse = user.toObject(); // Convertir a objeto plano
     delete userResponse.password; // Doble check por si 'select: false' fallara
     res.status(201).json({ ...userResponse, token }); // Enviar datos + token
-    // res.status(201).json({
-    //   _id: user._id,
-    //   name: user.name,
-    //   username: user.username,
-    //   email: user.email,
-    //   role: user.role,
-    //   location: user.location,
-    //   token: token,
-    // });
+    
   } else {
     return next(new AppError('Datos de usuario inválidos', 400)); // Error genérico si falla la creación
   }
@@ -94,13 +77,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
       username: user.username,
       email: user.email,
       role: user.role,
-      location: user.location,
-      birthDate: user.birthDate, 
-      sex: user.sex, 
       profilePictureUrl:user.profilePictureUrl, 
-      idCard: user.idCard, 
-      idCardExtension: user.idCardExtension,
-      phoneNumber: user.phoneNumber, 
       token: token,
     });
   } else {
@@ -120,14 +97,8 @@ const getMe = asyncHandler(async (req, res, next) => {
       name: user.name,
       username: user.username,
       email: user.email,
-      role: user.role,
-      location: user.location,
-      birthDate: user.birthDate, 
-      sex: user.sex, 
+      role: user.role,      
       profilePictureUrl:user.profilePictureUrl, 
-      idCard: user.idCard, 
-      idCardExtension: user.idCardExtension,
-      phoneNumber: user.phoneNumber,       
       createdAt: user.createdAt
     });
   } else {

@@ -13,6 +13,7 @@ const commentRoutes = require('./routes/commentRoutes');
 const userRoutes = require('./routes/userRoutes'); // Necesitará nueva ruta para completar perfil
 const locationRoutes = require('./routes/locationRoutes');
 const memberRoutes = require('./routes/memberRoutes'); // Importar nuevas rutas
+const projectRoutes = require('./routes/projectRoutes'); // <-- Importar
 
 
 // Cargar variables de entorno
@@ -62,9 +63,10 @@ app.get('/api', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/comments', commentRoutes);
-app.use('/api/users', userRoutes); // Ejemplo
-app.use('/api/locations', locationRoutes); // Ejemplo
-app.use('/api/members', memberRoutes); // <-- AÑADIR RUTAS DE MIEMBROS
+app.use('/api/users', userRoutes); 
+app.use('/api/locations', locationRoutes); 
+app.use('/api/members', memberRoutes); 
+app.use('/api/projects', projectRoutes); 
 
 // --- Middleware de Manejo de Errores (Importar y usar al final) ---
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');

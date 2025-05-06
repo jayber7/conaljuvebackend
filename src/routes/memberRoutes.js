@@ -1,6 +1,6 @@
 // src/routes/memberRoutes.js
 const express = require('express');
-const { body, param } = require('express-validator');
+const { body, param, query } = require('express-validator');
 const {
     registerNewMember,
     getMembers,
@@ -14,6 +14,22 @@ const { upload } = require('../config/cloudinaryConfig'); // Para subida de foto
 
 const router = express.Router();
 
+// --- VALIDACIÓN QUERY PARAMS PARA GET /api/members ---
+const getMembersQueryValidation = [
+    query('page').optional().isInt({ min: 1 }).toInt(),
+    query('limit').optional().isInt({ min: 1, max: 100 }).toInt(),
+    query('sort').optional().isString().trim().escape(),
+    query('status').optional().trim().toUpperCase().isIn(['PENDING', 'VERIFIED', 'REJECTED', 'INACTIVE']),
+    // Filtros de Ubicación (Numéricos)
+    query('location.departmentCode').optional().isInt({ min: 0 }).toInt(),
+    query('location.provinceCode').optional().isInt({ min: 0 }).toInt(),
+    query('location.municipalityCode').optional().isInt({ min: 0 }).toInt(),
+    // Filtros de Ubicación (Texto) - Añadir sanitización
+    query('location.zone').optional().isString().trim().escape(),
+    query('location.barrio').optional().isString().trim().escape(),
+    // Puedes añadir filtros para fullName, idCard, etc. si lo necesitas
+    query('fullName').optional().isString().trim().escape(),
+];
 // Validación para registro de miembro (más estricta)
 const memberRegisterValidation = [
     body('fullName', 'Nombre completo es requerido').not().isEmpty().trim().escape(),
@@ -26,6 +42,8 @@ const memberRegisterValidation = [
     body('location.provinceCode', 'Provincia requerida').not().isEmpty().isInt({min: 0}).toInt(),
     body('location.municipalityCode', 'Municipio requerido').not().isEmpty().isInt({min: 0}).toInt(),
     body('location.zone', 'Zona/Barrio requerido').not().isEmpty().trim().escape(),
+    body('location.neighborhood', 'El nombre del Barrio es requerido').not().isEmpty().withMessage('Barrio requerido').trim().escape(),
+    body('location.street', 'Nombre de calle inválido').optional({ checkFalsy: true }).isString().trim().escape(),
     body('neighborhoodCouncilName', 'Nombre de Junta Vecinal requerido').not().isEmpty().trim().escape(),    
     body('memberRoleInCouncilCode', 'Cargo en Junta Vecinal inválido').not().isEmpty().withMessage('El Cargo es requerido').isInt({ min: 1 }).withMessage('Seleccione un cargo válido').toInt(),
 ];
@@ -48,7 +66,7 @@ router.post(
 );
 
 // GET /api/members - Listar miembros (Admin)
-router.get('/', protect, admin, handleValidationErrors, getMembers);
+router.get('/', protect, admin, getMembersQueryValidation, handleValidationErrors, getMembers);
 
 // PUT /api/members/:code/status - Actualizar estado (Admin)
 router.put('/:code/status', protect, admin, statusUpdateValidation, handleValidationErrors, updateMemberStatus);

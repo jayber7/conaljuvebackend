@@ -9,6 +9,11 @@ const userSchema = new mongoose.Schema({
   googleId: {type: String,unique: true,sparse: true, index: true,},
   isProfileComplete: { type: Boolean, default: false }, // Para perfil básico post-social login  
   memberRegistrationCode: {type: String,unique: true,sparse: true,index: true,required: false,},
+  profilePictureUrl: { // Almacenaremos la URL de la imagen
+    type: String,
+    required: false,
+    // Podrías añadir validación de URL aquí si quieres
+  },
   isActive: { type: Boolean, default: true },
 }, {
   timestamps: true, // Añade createdAt y updatedAt automáticamente
