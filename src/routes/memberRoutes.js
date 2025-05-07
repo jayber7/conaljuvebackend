@@ -5,6 +5,7 @@ const {
     registerNewMember,
     getMembers,
     updateMemberStatus,
+    getMemberCount,
     // Importar otros si los creas (getMemberById, etc.)
 } = require('../controllers/memberController'); // Cambiar a memberController
 const { protect } = require('../middleware/authMiddleware');
@@ -72,5 +73,7 @@ router.get('/', protect, admin, getMembersQueryValidation, handleValidationError
 router.put('/:code/status', protect, admin, statusUpdateValidation, handleValidationErrors, updateMemberStatus);
 
 // Añadir rutas GET /:code, PUT /:code, DELETE /:code (todas protegidas por Admin) si son necesarias
+// ... (imports, getMemberCount) ...
+router.get('/stats/count', getMemberCount); // Sin protección si quieres que sea público
 
 module.exports = router;

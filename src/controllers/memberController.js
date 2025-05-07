@@ -136,12 +136,19 @@ const updateMemberStatus = asyncHandler(async (req, res, next) => {
     });
 });
 
-
+// @desc    Obtener conteo de miembros (ej. verificados)
+// @route   GET /api/members/stats/count
+// @access  Public (o el que decidas)
+const getMemberCount = asyncHandler(async (req, res, next) => {
+    const count = await Member.countDocuments({ status: 'VERIFIED' }); // Solo miembros verificados
+    res.status(200).json({ status: 'success', data: { count } });
+});
 
 module.exports = {
     registerNewMember,
     getMembers,
     updateMemberStatus,
+    getMemberCount,
     //linkMemberRegistration, // Exportar nueva función para userController/userRoutes
     // Añadir getMemberById, updateMember, deleteMember si los necesitas
 };

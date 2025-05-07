@@ -14,6 +14,7 @@ const userRoutes = require('./routes/userRoutes'); // Necesitará nueva ruta par
 const locationRoutes = require('./routes/locationRoutes');
 const memberRoutes = require('./routes/memberRoutes'); // Importar nuevas rutas
 const projectRoutes = require('./routes/projectRoutes'); // <-- Importar
+const statsRoutes = require('./routes/statsRoutes');
 
 
 // Cargar variables de entorno
@@ -67,7 +68,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/locations', locationRoutes); 
 app.use('/api/members', memberRoutes); 
 app.use('/api/projects', projectRoutes); 
-
+app.use('/api/stats', statsRoutes);
 // --- Middleware de Manejo de Errores (Importar y usar al final) ---
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 app.use(notFound);

@@ -7,6 +7,7 @@ const {
   createNews,
   updateNews,
   deleteNews,
+  getNewsCount,
 } = require('../controllers/newsController');
 const { protect } = require('../middleware/authMiddleware');
 const { admin } = require('../middleware/adminMiddleware'); // Middleware de rol Admin
@@ -219,4 +220,7 @@ router.put('/:id', protect, staffOrAdmin, idParamValidation, newsValidation, han
 // Solo ADMIN puede Eliminar
 router.delete('/:id', protect, admin, idParamValidation, handleValidationErrors, deleteNews);
 // --- FIN Rutas Protegidas ---
+// src/routes/newsRoutes.js
+// ... (imports, getNewsCount) ...
+router.get('/stats/count', getNewsCount);
 module.exports = router;

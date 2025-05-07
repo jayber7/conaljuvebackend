@@ -254,12 +254,20 @@ const deleteProject = asyncHandler(async (req, res, next) => {
     }
     res.status(204).json({ status: 'success', data: null });
 });
-
+// @desc    Obtener conteo de proyectos (ej. activos o completados)
+// @route   GET /api/projects/stats/count
+// @access  Public
+const getProjectCount = asyncHandler(async (req, res, next) => {
+    // Contar proyectos que no estén cancelados, por ejemplo
+    const count = await Project.countDocuments({ status: { $in: ['PLANIFICADO', 'EN_EJECUCION', 'COMPLETADO'] } });
+    res.status(200).json({ status: 'success', data: { count } });
+});
 
 module.exports = {
     getProjects,
     createProject,
-    getProjectById, // Exportar si se implementa
-    updateProject,  // Exportar si se implementa
-    deleteProject   // Exportar si se implementa
+    getProjectById, 
+    updateProject, 
+    deleteProject,  
+    getProjectCount,
 };

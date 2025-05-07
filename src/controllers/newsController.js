@@ -309,6 +309,13 @@ const deleteNews = asyncHandler(async (req, res, next) => {
   });
 });
 
+// @desc    Obtener conteo de noticias publicadas
+// @route   GET /api/news/stats/count
+// @access  Public
+const getNewsCount = asyncHandler(async (req, res, next) => {
+  const count = await NewsArticle.countDocuments({ isPublished: true });
+  res.status(200).json({ status: 'success', data: { count } });
+});
 
 module.exports = {
   getNews,
@@ -316,4 +323,5 @@ module.exports = {
   createNews,
   updateNews,
   deleteNews,
+  getNewsCount,
 };

@@ -2,7 +2,7 @@
 const express = require('express');
 const { body, param, query } = require('express-validator');
 const {
-    getProjects, createProject, getProjectById, updateProject, deleteProject
+    getProjects, createProject, getProjectById, updateProject, deleteProject, getProjectCount
 } = require('../controllers/projectController');
 const { protect } = require('../middleware/authMiddleware');
 const { admin } = require('../middleware/adminMiddleware');
@@ -62,5 +62,8 @@ router.put('/:id', protect, staffOrAdmin, idParamValidation, projectValidation, 
 // DELETE /api/projects/:id - Eliminar proyecto (Admin)
 router.delete('/:id', protect, admin, idParamValidation, handleValidationErrors, deleteProject);
 
+// src/routes/projectRoutes.js
+// ... (imports, getProjectCount) ...
+router.get('/stats/count', getProjectCount);
 
 module.exports = router;
